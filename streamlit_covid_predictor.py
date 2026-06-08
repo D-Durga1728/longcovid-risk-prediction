@@ -1616,15 +1616,15 @@ def page_landing():
         </div>
         <div class="hero-stats">
             <div class="hero-stat">
-                <div class="n">566,602</div>
+                <div class="n countup">566,602</div>
                 <div class="l">Patient Records Analysed</div>
             </div>
             <div class="hero-stat">
-                <div class="n">{_hero_auc_pct} AUC</div>
+                <div class="n countup">{_hero_auc_pct} AUC</div>
                 <div class="l">Calibrated LR · Test AUC</div>
             </div>
             <div class="hero-stat">
-                <div class="n">5</div>
+                <div class="n countup">5</div>
                 <div class="l">Long COVID Sequelae Assessed</div>
             </div>
         </div>
@@ -1637,12 +1637,59 @@ def page_landing():
     _stat_auc_pct = f"{mdl_metrics['ens']['auc']*100:.0f}%"
     st.markdown(f"""
     <div class="stat-bar">
-        <div class="stc"><div class="n">566K+</div><div class="l">Training Patients</div></div>
-        <div class="stc"><div class="n">{_stat_auc_pct}</div><div class="l">Model AUC Score</div></div>
-        <div class="stc"><div class="n">5 Models</div><div class="l">Benchmarked (LR best)</div></div>
-        <div class="stc"><div class="n">&lt;1%</div><div class="l">Gender Parity (AUC)</div></div>
+        <div class="stc"><div class="n countup">566K+</div><div class="l">Training Patients</div></div>
+        <div class="stc"><div class="n countup">{_stat_auc_pct}</div><div class="l">Model AUC Score</div></div>
+        <div class="stc"><div class="n countup">5 Models</div><div class="l">Benchmarked (LR best)</div></div>
+        <div class="stc"><div class="n countup">&lt;1%</div><div class="l">Gender Parity (AUC)</div></div>
     </div>
     """, unsafe_allow_html=True)
+
+    # Count-up animator for hero/stat numbers (a polished-product touch). Parses
+    # each .countup element's text, preserving prefix/suffix/decimals/commas, and
+    # eases from 0 to the value once. Respects prefers-reduced-motion.
+    import streamlit.components.v1 as _cu
+    _cu.html("""
+<script>
+(function(){
+  try{
+    var doc = window.parent.document;
+    if(window.parent.matchMedia && window.parent.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    function animate(el){
+      var full = el.textContent.trim();
+      var m = full.match(/^([^0-9]*)([0-9][0-9.,]*)(.*)$/);
+      if(!m) return;
+      var pre=m[1], numStr=m[2], suf=m[3];
+      var dec=(numStr.split('.')[1]||'').length;
+      var hasComma=numStr.indexOf(',')>-1;
+      var target=parseFloat(numStr.replace(/,/g,''));
+      if(isNaN(target)) return;
+      var start=null, dur=1000;
+      function fmt(v){
+        var s = hasComma ? Math.round(v).toLocaleString('en-US')
+                         : (dec ? v.toFixed(dec) : Math.round(v).toString());
+        return pre+s+suf;
+      }
+      function step(ts){
+        if(!start) start=ts;
+        var p=Math.min((ts-start)/dur,1);
+        var e=1-Math.pow(1-p,3);
+        el.textContent=fmt(target*e);
+        if(p<1){ requestAnimationFrame(step); } else { el.textContent=full; }
+      }
+      requestAnimationFrame(step);
+    }
+    function run(){
+      doc.querySelectorAll('.countup').forEach(function(el){
+        if(el.getAttribute('data-cu')) return;
+        el.setAttribute('data-cu','1');
+        animate(el);
+      });
+    }
+    setTimeout(run, 250);
+  }catch(e){}
+})();
+</script>
+""", height=0)
 
     # ── Data at a glance (EDA) — real figures from the analysis ───────────────
     def _fig_grid(items):

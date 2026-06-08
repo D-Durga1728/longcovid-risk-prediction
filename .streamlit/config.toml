@@ -1,0 +1,13 @@
+[theme]
+# Pin a light DCU theme so text stays readable regardless of the user's OS
+# dark-mode setting (otherwise Streamlit's default text colour can turn light
+# while our forced light background stays light → invisible text).
+base = "light"
+primaryColor = "#1A3C66"
+backgroundColor = "#E0F4FF"
+secondaryBackgroundColor = "#FFFFFF"
+textColor = "#0D1B3E"
+font = "sans serif"
+
+[client]
+showErrorDetails = true

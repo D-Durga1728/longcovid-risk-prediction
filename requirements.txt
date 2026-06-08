@@ -1,0 +1,8 @@
+# Streamlit app runtime dependencies (Streamlit Community Cloud reads this file).
+# Versions pinned to the environment the .joblib models were trained in, so the
+# calibrated model / scaler / imputer unpickle without version warnings.
+streamlit==1.57.0
+scikit-learn==1.8.0
+pandas==2.3.3
+numpy==2.4.6
+joblib==1.5.3

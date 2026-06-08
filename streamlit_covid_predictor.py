@@ -2424,18 +2424,16 @@ def page_tool():
         lc   = lc_risks(pt, score)
         urge = urgency(level)
         rec  = recovery(score, pt["age"], pt)
-        FN   = ["Age","Sex","Diabetes","Hypertension","Cardiovascular","Pneumonia",
-                "Obesity","Asthma","COPD"]
 
         # marker: start of the printable results region (used by the PDF export)
         st.markdown('<div id="print-start"></div>', unsafe_allow_html=True)
 
         st.markdown(
-            f'<div class="tool-hdr" style="margin-top:20px;">'
-            f'<div><h2>Patient Risk Assessment Results</h2>'
-            f'<p>Calibrated logistic-regression prediction · synthetic inputs · '
-            f'DCU F-REC research-compliant</p>'
-            f'</div><span class="live-badge">Result</span></div>',
+            '<div class="tool-hdr" style="margin-top:20px;">'
+            '<div><h2>Patient Risk Assessment Results</h2>'
+            '<p>Calibrated logistic-regression prediction · synthetic inputs · '
+            'DCU F-REC research-compliant</p>'
+            '</div><span class="live-badge">Result</span></div>',
             unsafe_allow_html=True)
 
         # Save-as-PDF button — clones ONLY the results region into a clean print

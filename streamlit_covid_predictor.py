@@ -719,6 +719,134 @@ html { overflow-y: scroll !important; }
   .card, .rrw, .mc, figure { break-inside: avoid; page-break-inside: avoid; }
   a[href]::after { content: ""; }   /* don't append URLs */
 }
+
+/* ════════════════════════════════════════════════════════════════════════════
+   CLINICAL / ACADEMIC THEME OVERRIDE
+   A restrained research-tool aesthetic: neutral paper background, flat bordered
+   cards, solid (non-gradient) headers, muted accents, and no decorative motion.
+   Placed last in the stylesheet so it wins over the vivid defaults above.
+   ════════════════════════════════════════════════════════════════════════════ */
+
+/* Page + containers → calm neutral paper, not bright sky-blue */
+html, body, [class*="css"],
+.main .block-container,
+[data-testid="stAppViewContainer"],
+[data-testid="stApp"],
+[data-testid="stMainBlockContainer"] {
+    background: #F4F6F8 !important;
+    color: #1A2233 !important;
+}
+
+/* Navbar → clean white strip with a hairline rule */
+[data-testid="stElementContainer"]:has(.dcu-navbar),
+[data-testid="stLayoutWrapper"]:has(.dcu-navbar) {
+    background: #FFFFFF !important;
+    border-bottom: 1px solid #E2E8F0 !important;
+    box-shadow: none !important;
+}
+.dcu-navbar .proj-title { border-left-color: #B8860B !important; }
+.dcu-navbar .proj-title .pt2 { color: #5B6675 !important; }
+
+/* Remove ALL decorative motion (entrance fades, pulse, float, sheen, bar grow).
+   The risk ring keeps its final filled state because .ring-arc already sets
+   stroke-dashoffset:var(--off); disabling the animation just shows it filled. */
+*, *::before, *::after { animation: none !important; }
+.pulse, .hero::before, .ring-arc,
+.anim-bar, .lbf, .hero-stats .hero-stat, .stat-bar .stc, .card {
+    animation: none !important;
+}
+.anim-bar, .lbf { transform: none !important; }
+
+/* No hover lifts/glow — quiet, professional feedback only */
+.card:hover, .fc:hover, .stc:hover, .mc:hover, .hero-stat:hover,
+.wu-card:hover, .mtl-step:hover,
+.dcu-navbar .risk-btn:hover, .dcu-navbar .navlink:hover,
+.sp-cell a:hover, .sp-cell button:hover {
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+/* Flat, bordered cards (academic, not glossy) */
+.card, .fc, .rrw, .wu, .tool-welcome,
+[data-testid="stExpander"] details {
+    background: #FFFFFF !important;
+    border: 1px solid #E2E8F0 !important;
+    border-radius: 6px !important;
+    box-shadow: none !important;
+}
+.card-title {
+    color: #1A3C66 !important;
+    border-bottom: 1px solid #E2E8F0 !important;
+    letter-spacing: .04em !important;
+}
+
+/* Solid restrained headers/sections — replace the vivid blue gradients */
+.hero, .tool-hdr, .ethics, .footer {
+    background: #1A3C66 !important;
+    border-radius: 6px !important;
+    box-shadow: none !important;
+}
+.hero h1 span, .sh h2 span { color: #E8B23A !important; }
+
+/* Sidebar → solid navy instead of a 3-stop blue gradient */
+[data-testid="stSidebar"] { background: #1A3C66 !important; }
+
+/* Metric / stat blocks → neutral surfaces with a thin accent, not saturated blue */
+.mc {
+    background: #F8FAFC !important;
+    border-left: 3px solid #1A3C66 !important;
+    border-radius: 4px !important;
+}
+.stc {
+    background: #FFFFFF !important;
+    border: 1px solid #E2E8F0 !important;
+    border-radius: 6px !important;
+}
+.stc .n { color: #1A3C66 !important; }
+.stc .l { color: #5B6675 !important; }
+.chip {
+    background: #F1F5F9 !important;
+    border: 1px solid #D7DEE7 !important;
+    color: #334155 !important;
+    border-radius: 4px !important;
+    font-weight: 600 !important;
+}
+.mtl-step {
+    box-shadow: none !important;
+    border: 1px solid #E2E8F0 !important;
+    border-top: 3px solid #1A3C66 !important;
+    border-radius: 6px !important;
+}
+.mtl-num { background: #1A3C66 !important; color: #fff !important; box-shadow: none !important; }
+.mtl-arrow { color: #9AA7B5 !important; }
+
+/* Flatten the gold pills — keep the colour, drop the heavy glow */
+.dcu-navbar .risk-btn, .nb-start button,
+[data-testid="stColumn"]:has(.hero-cta) [data-testid="stButton"] button,
+[data-testid="stColumn"]:has(.proj-logo) [data-testid="stButton"] button {
+    box-shadow: none !important;
+}
+
+/* "Live Result" → quiet label, not a pulsing badge */
+.live-badge {
+    background: transparent !important;
+    border: 1px solid rgba(255,255,255,.4) !important;
+    font-weight: 600 !important;
+}
+
+/* Risk band pills + dividers: flatter radius, thinner rules */
+.rb { border-radius: 4px !important; }
+.div { border-top: 1px solid #E2E8F0 !important; }
+
+/* Hide the large decorative emoji icons (feature cards, who-can-use cards,
+   methodology steps) — they read as clip-art in an academic tool. */
+.fc-icon, .wu-icon, .mtl-ic { display: none !important; }
+.fc-title, .mtl-t { margin-top: 0 !important; }
+
+/* Neutral scrollbar */
+::-webkit-scrollbar-track { background: #ECEFF3 !important; }
+::-webkit-scrollbar-thumb { background: #C2CAD4 !important; }
+::-webkit-scrollbar-thumb:hover { background: #9AA7B5 !important; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -753,11 +881,11 @@ FEAT_COLS  = ["age","sex","diabetes","hypertension","cardiovascular",
               "pneumonia","obesity","asthma","copd"]
 
 LC_META = {
-    "Respiratory":  {"icon":"🫁🌬️","syms":["Shortness of breath","Persistent cough","Reduced lung capacity","Chest tightness"],          "specs":("Consultant Pulmonologist","Respiratory Physiotherapist")},
-    "Cardiac":      {"icon":"❤️🫀","syms":["Heart palpitations","Chest pain","Elevated heart rate","Blood pressure changes"],            "specs":("Consultant Cardiologist","Cardiac Rehabilitation Specialist")},
-    "Neurological": {"icon":"🧠💭","syms":["Brain fog","Memory difficulties","Headaches","Concentration problems"],                        "specs":("Consultant Neurologist","Cognitive Rehabilitation Specialist")},
-    "Systemic":     {"icon":"😴💪","syms":["Chronic fatigue","Post-exertional malaise","Sleep disturbances","Muscle weakness"],            "specs":("Consultant in Internal Medicine","Rehabilitation Medicine Specialist")},
-    "Metabolic":    {"icon":"🩸🧪","syms":["Blood sugar dysregulation","Weight changes","Hormonal imbalances","Digestive issues"],        "specs":("Consultant Endocrinologist","Clinical Dietitian")},
+    "Respiratory":  {"icon":"","syms":["Shortness of breath","Persistent cough","Reduced lung capacity","Chest tightness"],          "specs":("Consultant Pulmonologist","Respiratory Physiotherapist")},
+    "Cardiac":      {"icon":"","syms":["Heart palpitations","Chest pain","Elevated heart rate","Blood pressure changes"],            "specs":("Consultant Cardiologist","Cardiac Rehabilitation Specialist")},
+    "Neurological": {"icon":"","syms":["Brain fog","Memory difficulties","Headaches","Concentration problems"],                        "specs":("Consultant Neurologist","Cognitive Rehabilitation Specialist")},
+    "Systemic":     {"icon":"","syms":["Chronic fatigue","Post-exertional malaise","Sleep disturbances","Muscle weakness"],            "specs":("Consultant in Internal Medicine","Rehabilitation Medicine Specialist")},
+    "Metabolic":    {"icon":"","syms":["Blood sugar dysregulation","Weight changes","Hormonal imbalances","Digestive issues"],        "specs":("Consultant Endocrinologist","Clinical Dietitian")},
 }
 TIMELINES = {
     "LOW":     [("#059669","W1-2","Initial Monitoring","GP review, baseline blood work, confirm COVID recovery."),("#2E5C92","W3-4","Lifestyle Optimisation","Balanced nutrition, graded exercise reintroduction."),("#0891B2","M2-3","Follow-up Assessment","Re-evaluate symptoms, confirm no new organ involvement."),("#7C3AED","M4+","Maintenance","Annual check-up, continued healthy lifestyle.")],
@@ -1233,7 +1361,7 @@ def render_nav():
         _action = ('<a class="risk-btn" href="?" target="_self" title="Back to home">← Home</a>')
     else:
         _action = ('<a class="risk-btn" href="?page=tool" target="_self" '
-                   'title="Open the assessment tool">🧬 Risk Tool</a>')
+                   'title="Open the assessment tool">Risk Tool</a>')
 
     # Two-tier navbar (like dcu.ie): row 1 = DCU logo + project title + action;
     # row 2 = the nav links. One flex column → adapts to any screen via clamp()/wrap.
@@ -1296,9 +1424,8 @@ def render_contact():
     """Contact & Research Team section (shown on both the landing and tool pages)."""
     st.markdown(
         '<div id="section-contact" style="'
-        'background:linear-gradient(135deg,#1A3C66 0%,#2E5C92 100%);'
-        'border-radius:22px 22px 0 0;padding:48px 40px 40px;margin:40px 0 0;color:#fff;text-align:center;">'
-        '<div style="font-size:2.2rem;margin-bottom:10px;">📬</div>'
+        'background:#1A3C66;'
+        'border-radius:6px 6px 0 0;padding:48px 40px 40px;margin:40px 0 0;color:#fff;text-align:center;">'
         '<h2 style="font-size:1.65rem;font-weight:800;margin:0 0 8px;color:#fff;">Contact &amp; Research Team</h2>'
         '<p style="font-size:.95rem;color:#BFDBFE;margin:0 auto 32px;max-width:560px;">'
         'Have questions about this tool, the research, or potential collaboration? We\'d love to hear from you.'
@@ -1307,45 +1434,42 @@ def render_contact():
         # Card 1: Researcher
         '<div style="background:rgba(255,255,255,.11);border:1px solid rgba(255,255,255,.22);'
         'border-radius:18px;padding:26px 28px;min-width:230px;flex:1;max-width:290px;text-align:left;">'
-        '<div style="font-size:1.8rem;margin-bottom:10px;">👨‍🎓</div>'
         '<div style="font-weight:800;font-size:1.05rem;color:#fff;margin-bottom:3px;">Durga Prasad Narsing</div>'
         '<div style="font-size:.8rem;color:#BFDBFE;margin-bottom:2px;">MSc Data Analytics · A00050350</div>'
         '<div style="font-size:.8rem;color:#BFDBFE;margin-bottom:14px;">Dublin City University</div>'
         '<div style="display:flex;flex-direction:column;gap:7px;">'
         '<a href="mailto:durgaprasad.narsing2@mail.dcu.ie" '
-        'style="color:#93C5FD;font-size:.8rem;text-decoration:none;">✉ durgaprasad.narsing2@mail.dcu.ie</a>'
+        'style="color:#93C5FD;font-size:.8rem;text-decoration:none;">durgaprasad.narsing2@mail.dcu.ie</a>'
         '<a href="https://github.com/D-Durga1728" target="_blank" '
-        'style="color:#93C5FD;font-size:.8rem;text-decoration:none;">🐙 github.com/D-Durga1728</a>'
+        'style="color:#93C5FD;font-size:.8rem;text-decoration:none;">github.com/D-Durga1728</a>'
         '<a href="https://www.linkedin.com/in/durga-prasad-narsing-155394281/" target="_blank" '
-        'style="color:#93C5FD;font-size:.8rem;text-decoration:none;">🔗 LinkedIn Profile</a>'
+        'style="color:#93C5FD;font-size:.8rem;text-decoration:none;">LinkedIn Profile</a>'
         '</div></div>'
         # Card 2: Supervisor
         '<div style="background:rgba(255,255,255,.11);border:1px solid rgba(255,255,255,.22);'
         'border-radius:18px;padding:26px 28px;min-width:230px;flex:1;max-width:290px;text-align:left;">'
-        '<div style="font-size:1.8rem;margin-bottom:10px;">👨‍🏫</div>'
         '<div style="font-weight:800;font-size:1.05rem;color:#fff;margin-bottom:3px;">Dr Martin Crane</div>'
         '<div style="font-size:.8rem;color:#BFDBFE;margin-bottom:2px;">Research Supervisor</div>'
         '<div style="font-size:.8rem;color:#BFDBFE;margin-bottom:14px;">Dublin City University</div>'
         '<div style="display:flex;flex-direction:column;gap:7px;">'
         '<a href="mailto:martin.crane@dcu.ie" '
-        'style="color:#93C5FD;font-size:.8rem;text-decoration:none;">✉ martin.crane@dcu.ie</a>'
+        'style="color:#93C5FD;font-size:.8rem;text-decoration:none;">martin.crane@dcu.ie</a>'
         '<a href="https://www.dcu.ie/computing/people/martin-crane" target="_blank" '
-        'style="color:#93C5FD;font-size:.8rem;text-decoration:none;">🌐 DCU Faculty Page</a>'
+        'style="color:#93C5FD;font-size:.8rem;text-decoration:none;">DCU Faculty Page</a>'
         '<a href="https://www.linkedin.com/in/martin-crane-a985a1a/" target="_blank" '
-        'style="color:#93C5FD;font-size:.8rem;text-decoration:none;">🔗 LinkedIn Profile</a>'
+        'style="color:#93C5FD;font-size:.8rem;text-decoration:none;">LinkedIn Profile</a>'
         '</div></div>'
         # Card 3: Institution
         '<div style="background:rgba(255,255,255,.11);border:1px solid rgba(255,255,255,.22);'
         'border-radius:18px;padding:26px 28px;min-width:230px;flex:1;max-width:290px;text-align:left;">'
-        '<div style="font-size:1.8rem;margin-bottom:10px;">🏛️</div>'
         '<div style="font-weight:800;font-size:1.05rem;color:#fff;margin-bottom:3px;">Dublin City University</div>'
         '<div style="font-size:.8rem;color:#BFDBFE;margin-bottom:2px;">School of Computing</div>'
         '<div style="font-size:.8rem;color:#BFDBFE;margin-bottom:14px;">DCU F-REC Ethics Approved</div>'
         '<div style="display:flex;flex-direction:column;gap:7px;">'
         '<a href="https://www.dcu.ie" target="_blank" '
-        'style="color:#93C5FD;font-size:.8rem;text-decoration:none;">🌐 www.dcu.ie</a>'
+        'style="color:#93C5FD;font-size:.8rem;text-decoration:none;">www.dcu.ie</a>'
         '<a href="https://www.dcu.ie/computing" target="_blank" '
-        'style="color:#93C5FD;font-size:.8rem;text-decoration:none;">💻 School of Computing</a>'
+        'style="color:#93C5FD;font-size:.8rem;text-decoration:none;">School of Computing</a>'
         '</div></div>'
         '</div></div>',
         unsafe_allow_html=True)
@@ -1451,14 +1575,15 @@ def page_landing():
     st.markdown(f"""
     <div id="section-overview" class="hero">
         <div>
-            <div class="hero-badge">🎓 DCU MSc Research Prototype 2026</div>
-            <h1 style="margin-bottom:6px;">🦠 <span>Long COVID</span><br>Risk Assessment
+            <div class="hero-badge">DCU MSc Research Prototype · 2026</div>
+            <h1 style="margin-bottom:6px;"><span>Long COVID</span><br>Risk Assessment
                 <span style="display:block;font-size:.42em;font-weight:700;color:#FFA700;
                     margin-top:6px;letter-spacing:.01em;">COVID-19 mortality-proxy model</span>
             </h1>
-            <p style="margin-top:0;">🧬 Predictive modelling for personalised Long COVID risk stratification.
-               Built on 566,602 real patient records with a calibrated ML model,
-               SHAP explainability, and evidence-based clinical guidance.</p>
+            <p style="margin-top:0;">Predictive modelling for personalised Long COVID risk
+               stratification, built on 566,602 patient records with a calibrated
+               logistic-regression model, SHAP-based explanation, and the supporting
+               clinical evidence.</p>
             <div style="background:rgba(255,255,255,.10);border-left:3px solid #FFA700;
                 border-radius:8px;padding:10px 14px;margin:14px 0;font-size:.74rem;
                 color:rgba(255,255,255,.82);line-height:1.55;">
@@ -1469,15 +1594,15 @@ def page_landing():
         </div>
         <div class="hero-stats">
             <div class="hero-stat">
-                <div class="n">🏥 566,602</div>
-                <div class="l">Real Patient Records Analysed</div>
+                <div class="n">566,602</div>
+                <div class="l">Patient Records Analysed</div>
             </div>
             <div class="hero-stat">
-                <div class="n">🎯 {_hero_auc_pct} AUC</div>
+                <div class="n">{_hero_auc_pct} AUC</div>
                 <div class="l">Calibrated LR · Test AUC</div>
             </div>
             <div class="hero-stat">
-                <div class="n">🫁❤️🧠 5</div>
+                <div class="n">5</div>
                 <div class="l">Long COVID Sequelae Assessed</div>
             </div>
         </div>
@@ -1490,10 +1615,10 @@ def page_landing():
     _stat_auc_pct = f"{mdl_metrics['ens']['auc']*100:.0f}%"
     st.markdown(f"""
     <div class="stat-bar">
-        <div class="stc"><div class="n">🏥 566K+</div><div class="l">Training Patients</div></div>
-        <div class="stc"><div class="n">📊 {_stat_auc_pct}</div><div class="l">Model AUC Score</div></div>
-        <div class="stc"><div class="n">🤖 5 Models</div><div class="l">Benchmarked (LR best)</div></div>
-        <div class="stc"><div class="n">⚖️ &lt;1%</div><div class="l">Gender Parity (AUC)</div></div>
+        <div class="stc"><div class="n">566K+</div><div class="l">Training Patients</div></div>
+        <div class="stc"><div class="n">{_stat_auc_pct}</div><div class="l">Model AUC Score</div></div>
+        <div class="stc"><div class="n">5 Models</div><div class="l">Benchmarked (LR best)</div></div>
+        <div class="stc"><div class="n">&lt;1%</div><div class="l">Gender Parity (AUC)</div></div>
     </div>
     """, unsafe_allow_html=True)
 
@@ -1520,7 +1645,7 @@ def page_landing():
         ("eda_plots/03_condition_prevalence.png","<strong>Comorbidity prevalence</strong> across the cohort."),
     ])
     if _eda:
-        with st.expander("📊 Data at a glance — exploratory analysis (click to expand)"):
+        with st.expander("Data at a glance — exploratory analysis"):
             st.markdown(_eda, unsafe_allow_html=True)
 
     # Model Performance Section
@@ -1636,7 +1761,7 @@ def page_landing():
             + _imgs + '</div>', unsafe_allow_html=True)
 
     # ── Model Card (collapsible) — the single most defensible artefact ────────
-    with st.expander("📋 Model Card — full technical summary (click to expand)"):
+    with st.expander("Model Card — full technical summary"):
         st.markdown(f"""
 **Model name:** Long COVID Risk Assessment — COVID-19 mortality-proxy model
 **Owner:** Durga Prasad Narsing · MSc Data Analytics, Dublin City University (2026)
@@ -1777,8 +1902,8 @@ def page_landing():
         </div>
         <div class="fc"><div class="fc-icon">🫁❤️🧠🔋⚗️</div>
             <div class="fc-title">5 Long COVID Sequelae</div>
-            <div class="fc-text">Respiratory 🫁, Cardiac ❤️, Neurological 🧠 (Brain Fog),
-            Systemic 🔋 (Fatigue), Metabolic ⚗️ — each assessed independently.</div>
+            <div class="fc-text">Respiratory, Cardiac, Neurological (brain fog),
+            Systemic (fatigue) and Metabolic — each assessed independently.</div>
         </div>
         <div class="fc"><div class="fc-icon">⚖️🩺</div>
             <div class="fc-title">Fairness Audited</div>
@@ -1869,13 +1994,13 @@ def page_landing():
         ("fairness_plots/01_fairness_age.png",    "<strong>Fairness by age group</strong> — 50+ flagged for monitoring."),
     ])
     if _fair:
-        with st.expander("⚖️ Fairness audit — subgroup performance plots"):
+        with st.expander("Fairness audit — subgroup performance"):
             st.markdown(_fair, unsafe_allow_html=True)
 
     # ── References & evidence base ───────────────────────────────────────────
     # Curated subset of the project's 27-paper bibliography — each entry maps to a
     # method/feature visible in this app. Full list is in the written report.
-    with st.expander("📚 References & evidence base"):
+    with st.expander("References & evidence base"):
         st.markdown(
             '<div style="font-size:.84rem;color:#374151;line-height:1.6;margin-bottom:10px;">'
             'Each method in this prototype is grounded in published work. The papers below '
@@ -1983,28 +2108,28 @@ def page_tool():
         'flex-wrap:wrap;gap:12px;">'
         '<div style="flex:1;min-width:240px;">'
         '<div style="font-size:.72rem;font-weight:800;color:#2E5C92;text-transform:uppercase;'
-        'letter-spacing:.07em;margin-bottom:4px;">📋 Overview</div>'
+        'letter-spacing:.07em;margin-bottom:4px;">Overview</div>'
         '<div style="font-size:1.15rem;font-weight:800;color:#0D1B3E;margin-bottom:6px;">'
-        '🩺 Long COVID Risk Assessment Tool</div></div>'
+        'Long COVID Risk Assessment Tool</div></div>'
         '<div style="display:flex;gap:10px;flex-shrink:0;flex-wrap:wrap;">'
         '<div style="background:#EFF6FF;border-radius:8px;padding:6px 14px;'
         'font-size:.74rem;font-weight:700;color:#1E40AF;border:1px solid #BFDBFE;">'
-        '🤖 Calibrated LR · 9 features</div>'
+        'Calibrated logistic regression · 9 features</div>'
         '<div style="background:#F0FDF4;border-radius:8px;padding:6px 14px;'
         'font-size:.74rem;font-weight:700;color:#166534;border:1px solid #BBF7D0;">'
-        '✅ DCU F-REC Compliant</div>'
+        'DCU F-REC Compliant</div>'
         '</div></div>'
         # description
         '<div style="font-size:.84rem;color:#374151;line-height:1.6;margin-top:8px;">'
         'Enter a patient profile below to get a calibrated COVID-19 mortality-proxy risk score '
         '(0–100%) with a risk band and the factors driving it. Use a '
         '<strong style="color:#1A3C66;">Sample Patient</strong> to autofill the form, or complete it '
-        'manually, then click <strong style="color:#1A3C66;">🔍 Assess Risk</strong>. '
+        'manually, then click <strong style="color:#1A3C66;">Assess Risk</strong>. '
         'Trained on 220,218 confirmed COVID-19 cases · AUC 0.888 · isotonic-calibrated.</div>'
         # conditions assessed
         '<div style="font-size:.76rem;color:#6B7280;margin-top:8px;border-top:1px solid #EFF2F7;'
-        'padding-top:8px;">Conditions assessed: 🫁 Respiratory &nbsp;❤️ Cardiac &nbsp;'
-        '🧠 Neurological &nbsp;😴 Systemic &nbsp;🩸 Metabolic</div>'
+        'padding-top:8px;">Conditions assessed: Respiratory &nbsp;·&nbsp; Cardiac &nbsp;·&nbsp; '
+        'Neurological &nbsp;·&nbsp; Systemic &nbsp;·&nbsp; Metabolic</div>'
         '</div>',
         unsafe_allow_html=True)
 
@@ -2012,10 +2137,10 @@ def page_tool():
     _tool_auc_pct = f"{mdl_metrics['ens']['auc']*100:.0f}%"
     st.markdown(f"""
 <div class="stat-bar">
-<div class="stc"><div class="n">🏥 566K+</div><div class="l">Training Patients</div></div>
-<div class="stc"><div class="n">📊 {_tool_auc_pct}</div><div class="l">Model AUC Score</div></div>
-<div class="stc"><div class="n">🤖 5 Models</div><div class="l">Benchmarked (LR best)</div></div>
-<div class="stc"><div class="n">⚖️ &lt;1%</div><div class="l">Gender Parity (AUC)</div></div>
+<div class="stc"><div class="n">566K+</div><div class="l">Training Patients</div></div>
+<div class="stc"><div class="n">{_tool_auc_pct}</div><div class="l">Model AUC Score</div></div>
+<div class="stc"><div class="n">5 Models</div><div class="l">Benchmarked (LR best)</div></div>
+<div class="stc"><div class="n">&lt;1%</div><div class="l">Gender Parity (AUC)</div></div>
 </div>
 """, unsafe_allow_html=True)
 
@@ -2087,10 +2212,10 @@ def page_tool():
     # ── SECTION 2 : Assessment form (horizontal card) ─────────────────────────
     st.markdown('<div id="section-form" style="height:18px;"></div>', unsafe_allow_html=True)  # nav anchor + spacing
     st.markdown(
-        '<div style="background:linear-gradient(135deg,#1A3C66 0%,#2E5C92 100%);'
-        'border-radius:14px 14px 0 0;padding:13px 22px;">'
+        '<div style="background:#1A3C66;'
+        'border-radius:6px 6px 0 0;padding:13px 22px;">'
         '<span style="color:#fff;font-weight:700;font-size:.9rem;">'
-        '📋 Patient Assessment Form</span></div>',
+        'Patient Assessment Form</span></div>',
         unsafe_allow_html=True)
 
     # Form area: white background + dark navy text on all widget labels
@@ -2144,33 +2269,33 @@ def page_tool():
     with fa:
         st.markdown(
             '<p style="font-size:.74rem;font-weight:800;color:#1A3C66;'
-            'text-transform:uppercase;letter-spacing:.07em;margin:0 0 6px;">👤 Demographics</p>',
+            'text-transform:uppercase;letter-spacing:.07em;margin:0 0 6px;">Demographics</p>',
             unsafe_allow_html=True)
-        age = st.slider("🎂 Age (years)", 1, 100, 50, key="il_age")
-        sex = st.selectbox("⚥ Biological Sex", ["Female", "Male"], key="il_sex")
+        age = st.slider("Age (years)", 1, 100, 50, key="il_age")
+        sex = st.selectbox("Biological Sex", ["Female", "Male"], key="il_sex")
 
     with fb:
         # ── Comorbidities ──────────────────────────────────────────────────────
         st.markdown(
             '<p style="font-size:.74rem;font-weight:800;color:#1A3C66;'
-            'text-transform:uppercase;letter-spacing:.07em;margin:0 0 4px;">🩺 Comorbidities</p>',
+            'text-transform:uppercase;letter-spacing:.07em;margin:0 0 4px;">Comorbidities</p>',
             unsafe_allow_html=True)
         cb1, cb2 = st.columns(2)
         with cb1:
-            diabetes       = st.checkbox("🩸 Diabetes",       key="il_diabetes")
-            cardiovascular = st.checkbox("❤️ Cardiovascular", key="il_cardiovascular")
-            asthma         = st.checkbox("🌬️ Asthma",         key="il_asthma")
+            diabetes       = st.checkbox("Diabetes",       key="il_diabetes")
+            cardiovascular = st.checkbox("Cardiovascular", key="il_cardiovascular")
+            asthma         = st.checkbox("Asthma",         key="il_asthma")
         with cb2:
-            hypertension   = st.checkbox("💊 Hypertension",   key="il_hypertension")
-            obesity        = st.checkbox("⚖️ Obesity",         key="il_obesity")
-            copd           = st.checkbox("🫁 COPD",            key="il_copd")
+            hypertension   = st.checkbox("Hypertension",   key="il_hypertension")
+            obesity        = st.checkbox("Obesity",         key="il_obesity")
+            copd           = st.checkbox("COPD",            key="il_copd")
 
         # ── Clinical Status ────────────────────────────────────────────────────
         st.markdown(
             '<p style="font-size:.74rem;font-weight:800;color:#1A3C66;'
-            'text-transform:uppercase;letter-spacing:.07em;margin:10px 0 4px;">🏥 Clinical Status</p>',
+            'text-transform:uppercase;letter-spacing:.07em;margin:10px 0 4px;">Clinical Status</p>',
             unsafe_allow_html=True)
-        pneumonia = st.checkbox("🤧 Pneumonia Diagnosed", key="il_pneumonia")
+        pneumonia = st.checkbox("Pneumonia Diagnosed", key="il_pneumonia")
         st.markdown(
             '<div style="background:#FEF3C7;border-radius:8px;padding:6px 10px;'
             'font-size:.68rem;color:#78350F;border-left:3px solid #F59E0B;margin-top:8px;">'
@@ -2181,10 +2306,10 @@ def page_tool():
         # ── Action buttons ─────────────────────────────────────────────────────
         st.markdown(
             '<p style="font-size:.74rem;font-weight:800;color:#1A3C66;'
-            'text-transform:uppercase;letter-spacing:.07em;margin:0 0 6px;">⚡ Actions</p>',
+            'text-transform:uppercase;letter-spacing:.07em;margin:0 0 6px;">Actions</p>',
             unsafe_allow_html=True)
         st.markdown('<div class="sb-run">', unsafe_allow_html=True)
-        run_clicked = st.button("🔍 Assess Risk", use_container_width=True, key="il_run")
+        run_clicked = st.button("Assess Risk", use_container_width=True, key="il_run")
         st.markdown('</div>', unsafe_allow_html=True)
         st.markdown('<div class="sb-reset">', unsafe_allow_html=True)
         reset_clicked = st.button("↺ Reset", use_container_width=True, key="il_reset")
@@ -2213,12 +2338,11 @@ def page_tool():
             '<div style="background:#fff;border-radius:14px;padding:32px;'
             'margin-top:20px;box-shadow:0 2px 12px rgba(26,60,102,.08);'
             'border:1px solid #BFDBFE;text-align:center;">'
-            '<div style="font-size:3rem;margin-bottom:12px;">🦠🩺🧬</div>'
             '<div style="font-size:1rem;font-weight:700;color:#0D1B3E;margin-bottom:8px;">'
             'Ready for Long COVID Assessment</div>'
             '<div style="font-size:.85rem;color:#4B6CB7;max-width:520px;margin:0 auto;">'
             'Fill in the patient profile above, then click '
-            '<strong>🔍 Assess Risk</strong> to generate a personalised '
+            '<strong>Assess Risk</strong> to generate a personalised '
             'Long COVID risk prediction.<br><br>'
             'Or click a <strong>Sample Patient</strong> button for an instant demo.'
             '</div></div>',
@@ -2239,9 +2363,10 @@ def page_tool():
 
         st.markdown(
             f'<div class="tool-hdr" style="margin-top:20px;">'
-            f'<div><h2>🦠 Patient Risk Assessment Results</h2>'
-            f'<p>🤖 Calibrated LR prediction · 🔬 Dummy data · ✅ Research compliant (DCU F-REC)</p>'
-            f'</div><span class="live-badge pulse">Live Result</span></div>',
+            f'<div><h2>Patient Risk Assessment Results</h2>'
+            f'<p>Calibrated logistic-regression prediction · synthetic inputs · '
+            f'DCU F-REC research-compliant</p>'
+            f'</div><span class="live-badge">Result</span></div>',
             unsafe_allow_html=True)
 
         # Save-as-PDF button — clones ONLY the results region into a clean print
@@ -2288,11 +2413,11 @@ def page_tool():
         st.markdown(
             '<div style="background:#FFFBEB;border:1px solid #FDE68A;border-left:4px solid #FFA700;'
             'border-radius:10px;padding:11px 16px;margin:4px 0 14px;display:flex;gap:14px;'
-            'flex-wrap:wrap;font-size:.78rem;line-height:1.55;color:#374151;">'
-            '<div style="flex:1;min-width:240px;color:#374151;"><strong style="color:#0D1B3E;">✅ What this is:</strong> '
+            'flex-wrap:wrap;font-size:.78rem;line-height:1.55;color:#374151;background:#FFFFFF;">'
+            '<div style="flex:1;min-width:240px;color:#374151;"><strong style="color:#0D1B3E;">What this is:</strong> '
             'a calibrated, population-level estimate of <em>severe-outcome (mortality-proxy)</em> risk '
             'for screening and triage support.</div>'
-            '<div style="flex:1;min-width:240px;color:#374151;"><strong style="color:#0D1B3E;">⛔ What this isn\'t:</strong> '
+            '<div style="flex:1;min-width:240px;color:#374151;"><strong style="color:#0D1B3E;">What this isn\'t:</strong> '
             'a Long COVID diagnosis, an individual certainty, or a substitute for clinical judgement — '
             'a 30% score means ~30 of 100 similar patients experienced the outcome.</div>'
             '</div>',
@@ -2324,7 +2449,7 @@ def page_tool():
         st.markdown(
             '<div class="card" style="margin-bottom:14px;">'
             '<div style="font-size:.72rem;font-weight:800;color:#2E5C92;text-transform:uppercase;'
-            'letter-spacing:.06em;margin-bottom:10px;">📝 Patient Profile — entered inputs</div>'
+            'letter-spacing:.06em;margin-bottom:10px;">Patient Profile — entered inputs</div>'
             f'<div style="display:flex;gap:10px;flex-wrap:wrap;">{_cells}</div></div>',
             unsafe_allow_html=True)
 
@@ -2352,7 +2477,7 @@ def page_tool():
         st.markdown(
             f'<div style="font-size:.74rem;color:#6B7280;margin:-4px 0 14px;line-height:1.55;'
             f'border-left:3px solid #4AC9E3;padding:4px 0 4px 12px;">'
-            f'🎯 <strong style="color:#1A3C66;">Calibrated risk</strong> '
+            f'<strong style="color:#1A3C66;">Calibrated risk</strong> '
             f'(Brier {mdl_metrics["ens"]["brier"]:.3f}, ECE {mdl_metrics["ens"]["ece"]:.4f}) — '
             f'a {score:.0f}% estimate corresponds to roughly {score:.0f} severe outcomes per 100 '
             f'similar patients, not an arbitrary index.</div>',
@@ -2457,10 +2582,10 @@ def page_tool():
             '<div style="display:flex;gap:26px;flex-wrap:wrap;margin-top:10px;">'
             '<div style="flex:1;min-width:240px;">'
             '<div style="font-size:.74rem;font-weight:800;color:#991B1B;margin-bottom:8px;">'
-            '🔺 Pushing risk UP</div>' + _factor_rows(_raises, True) + '</div>'
+            'Pushing risk up</div>' + _factor_rows(_raises, True) + '</div>'
             '<div style="flex:1;min-width:240px;">'
             '<div style="font-size:.74rem;font-weight:800;color:#065F46;margin-bottom:8px;">'
-            '🔻 Pulling risk DOWN</div>' + _factor_rows(_lowers, False) + '</div>'
+            'Pulling risk down</div>' + _factor_rows(_lowers, False) + '</div>'
             '</div>'
             '<div style="font-size:.71rem;color:#6B7280;margin-top:10px;border-top:1px solid #EFF2F7;'
             'padding-top:8px;line-height:1.5;">Contribution = ln(odds ratio per +1 SD) × this patient\'s '
@@ -2476,7 +2601,7 @@ def page_tool():
             _names = {"pneumonia":"Pneumonia","age":"Age","sex":"Sex (Female)","diabetes":"Diabetes",
                       "copd":"COPD","obesity":"Obesity","hypertension":"Hypertension",
                       "cardiovascular":"Cardiovascular","asthma":"Asthma"}
-            with st.expander("🧮 Nomogram — transparent manual score (illustrative, not the official prediction)"):
+            with st.expander("Nomogram — transparent manual score (illustrative, not the official prediction)"):
                 _chips = ""
                 for _f, _p in sorted(_nbd, key=lambda x: -abs(x[1])):
                     _pc = "#DC2626" if _p > 0 else "#059669"
@@ -2608,7 +2733,7 @@ def page_tool():
 
         with cleft:
             # Care Timeline
-            st.markdown('<div class="card-title">🗓️ Personalised Care Timeline</div>',
+            st.markdown('<div class="card-title">Personalised Care Timeline</div>',
                         unsafe_allow_html=True)
             steps = TIMELINES.get(level, TIMELINES["MEDIUM"])
             tl = "".join([
@@ -2626,28 +2751,28 @@ def page_tool():
                 unsafe_allow_html=True)
 
             # Evidence-Based Clinical Guidance (below timeline — balances right column height)
-            st.markdown('<div class="card-title" style="margin-top:14px;">📋 Evidence-Based Clinical Guidance</div>',
+            st.markdown('<div class="card-title" style="margin-top:14px;">Evidence-Based Clinical Guidance</div>',
                         unsafe_allow_html=True)
             st.markdown(
                 '<div class="card" style="font-size:.83rem;line-height:1.75;color:#374151;">'
-                '<strong style="color:#0D1B3E;">🌍 WHO Post-COVID (2022):</strong> Typically within '
+                '<strong style="color:#0D1B3E;">WHO Post-COVID (2022):</strong> Typically within '
                 '3 months of acute infection, lasting 2 months or more.<br><br>'
-                '<strong style="color:#0D1B3E;">🇺🇸 CDC PASC:</strong> Assess ongoing symptoms and '
+                '<strong style="color:#0D1B3E;">CDC PASC:</strong> Assess ongoing symptoms and '
                 'provide specialist referrals guided by risk stratification.<br><br>'
-                '<strong style="color:#0D1B3E;">🔧 Modifiable Risk Factors:</strong>'
+                '<strong style="color:#0D1B3E;">Modifiable Risk Factors:</strong>'
                 '<div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:9px;">'
-                '<span class="chip">💉 Vaccination</span>'
-                '<span class="chip">🩸 Diabetes control</span>'
-                '<span class="chip">💊 Blood pressure</span>'
-                '<span class="chip">⚖️ Weight management</span>'
-                '<span class="chip">🚭 Smoking cessation</span>'
-                '<span class="chip">🏃 Rehabilitation</span>'
+                '<span class="chip">Vaccination</span>'
+                '<span class="chip">Diabetes control</span>'
+                '<span class="chip">Blood pressure</span>'
+                '<span class="chip">Weight management</span>'
+                '<span class="chip">Smoking cessation</span>'
+                '<span class="chip">Rehabilitation</span>'
                 '</div></div>',
                 unsafe_allow_html=True)
 
         with cright:
             # Specialist Referrals
-            st.markdown('<div class="card-title">🩺 Specialist Referrals</div>',
+            st.markdown('<div class="card-title">Specialist Referrals</div>',
                         unsafe_allow_html=True)
             hcats = ([c for c,p in lc.items() if p>=40]
                      or sorted(lc, key=lambda k: lc[k], reverse=True)[:2])
@@ -2663,22 +2788,22 @@ def page_tool():
                     f'margin-bottom:9px;border:2px solid #BFDBFE;'
                     f'box-shadow:0 1px 6px rgba(26,60,102,.06);">'
                     f'<div style="font-weight:700;font-size:.84rem;color:{a};margin-bottom:5px;">'
-                    f'{m["icon"]} {cat} ({pct:.0f}%)</div>'
+                    f'{cat} ({pct:.0f}%)</div>'
                     f'<div>{sc2}</div>'
                     f'<div style="font-size:.72rem;color:#6B7280;margin-top:4px;font-weight:500;">'
-                    f'📅 {surg}</div></div>',
+                    f'{surg}</div></div>',
                     unsafe_allow_html=True)
 
             # Emergency Red Flags
-            st.markdown('<div class="card-title" style="margin-top:14px;">🚨 Emergency Red Flags</div>',
+            st.markdown('<div class="card-title" style="margin-top:14px;">Emergency Red Flags</div>',
                         unsafe_allow_html=True)
             rf_html = "".join([f"<p style='margin:4px 0;font-size:.81rem;color:#7F1D1D;'>{f}</p>" for f in [
-                "🫀 Sudden chest pain or pressure",
-                "🫁 Severe shortness of breath at rest",
-                "🧠 Confusion, slurred speech, facial drooping",
-                "❤️ Heart rate above 120 bpm at rest",
-                "🩸 Oxygen saturation below 94%",
-                "🤕 Sudden severe headache",
+                "Sudden chest pain or pressure",
+                "Severe shortness of breath at rest",
+                "Confusion, slurred speech, facial drooping",
+                "Heart rate above 120 bpm at rest",
+                "Oxygen saturation below 94%",
+                "Sudden severe headache",
             ]])
             st.markdown(
                 f'<div class="rfb"><div style="font-weight:700;font-size:.84rem;'
@@ -2687,7 +2812,7 @@ def page_tool():
                 unsafe_allow_html=True)
 
             # Model Information
-            st.markdown('<div class="card-title" style="margin-top:14px;">🤖 Model Information</div>',
+            st.markdown('<div class="card-title" style="margin-top:14px;">Model Information</div>',
                         unsafe_allow_html=True)
             st.markdown(
                 '<div class="card" style="font-size:.82rem;line-height:1.75;color:#374151;">'

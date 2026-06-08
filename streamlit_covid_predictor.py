@@ -747,21 +747,21 @@ html, body, [class*="css"],
 .dcu-navbar .proj-title { border-left-color: #B8860B !important; }
 .dcu-navbar .proj-title .pt2 { color: #5B6675 !important; }
 
-/* Remove ALL decorative motion (entrance fades, pulse, float, sheen, bar grow).
-   The risk ring keeps its final filled state because .ring-arc already sets
-   stroke-dashoffset:var(--off); disabling the animation just shows it filled. */
-*, *::before, *::after { animation: none !important; }
-.pulse, .hero::before, .ring-arc,
-.anim-bar, .lbf, .hero-stats .hero-stat, .stat-bar .stc, .card {
-    animation: none !important;
-}
-.anim-bar, .lbf { transform: none !important; }
+/* CURATED MOTION — keep meaningful entrance/feedback, drop the gimmicks.
+   We deliberately KEEP: hero/section fade-in, risk-ring fill, bar growth, and a
+   subtle card-hover lift (motion that conveys cause→effect). We DISABLE only the
+   decorative loops that read as "demo": the pulsing badge and the floating glow.
+   (Accessibility: the prefers-reduced-motion guard further up still wins.) */
+.pulse { animation: none !important; }
+.hero::before { animation: none !important; }
 
-/* No hover lifts/glow — quiet, professional feedback only */
-.card:hover, .fc:hover, .stc:hover, .mc:hover, .hero-stat:hover,
-.wu-card:hover, .mtl-step:hover,
-.dcu-navbar .risk-btn:hover, .dcu-navbar .navlink:hover,
-.sp-cell a:hover, .sp-cell button:hover {
+/* Subtle, professional hover lift on interactive cards only */
+.card:hover, .fc:hover, .mtl-step:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 18px rgba(13,27,62,.08) !important;
+}
+/* Static blocks shouldn't react to hover */
+.stc:hover, .mc:hover, .hero-stat:hover, .wu-card:hover {
     transform: none !important;
     box-shadow: none !important;
 }

@@ -875,8 +875,8 @@ HIDE_SIDEBAR = """
 # Helpers
 # ─────────────────────────────────────────────────────────────────────────────
 def _find_data():
-    # Fix 12: No hardcoded Windows paths. Check DATA_PATH env var first,
-    # then look beside this script, then fall back to CWD.
+    # Resolve the dataset path without hardcoding it: env var override first,
+    # then alongside this script, then the working directory.
     candidates = [
         os.environ.get("COVID_DATA_PATH", ""),          # env var override
         os.path.join(os.path.dirname(os.path.abspath(__file__)), "covid.csv"),
@@ -911,17 +911,14 @@ def rlevel(s): return "CRITICAL" if s>=70 else "HIGH" if s>=50 else "MEDIUM" if 
 def urgency(l): return {"CRITICAL":"Within 24-48 hours","HIGH":"Within 1 week","MEDIUM":"Within 2 weeks","LOW":"As scheduled"}[l]
 def recovery(s, a, pt=None):
     """
-    Estimate recovery timeline.
-
-    Fix 19: Now accounts for comorbidity burden (number of active conditions)
-    in addition to age and risk score, giving a more nuanced estimate.
-    pt is the full patient dict; if omitted the old two-factor logic is used.
+    Estimate a recovery-time band from the risk score, age, and comorbidity load.
+    `pt` is the full patient dict; if omitted, only score and age are used.
     """
     b = "3-4 months" if s<30 else "4-6 months" if s<50 else "6-9 months" if s<70 else "9-12 months"
-    # Age extension (original logic)
+    # Older patients with substantial risk tend to take longer.
     if a >= 65 and s >= 50:
         b = b.replace("months", "months (extended)")
-    # Comorbidity burden extension (new — Fix 19)
+    # A heavy comorbidity load also extends the expected timeline.
     if pt is not None:
         comorb_keys = ["diabetes","hypertension","cardiovascular","obesity","asthma","copd","pneumonia"]
         comorb_count = sum(pt.get(k, 0) for k in comorb_keys)
@@ -932,14 +929,13 @@ def bclr(p): return "#DC2626" if p>=70 else "#EA580C" if p>=50 else "#D97706" if
 
 def lc_risks(pt, base):
     """
-    Estimate risk for five Long COVID sequelae categories.
+    Estimate risk for the five Long COVID sequelae categories.
 
-    Fix 18 — NOTE FOR THESIS: These scores are clinically-informed heuristic
-    approximations derived from the literature on Long COVID risk factors.
-    They are NOT direct outputs of the trained mortality model.  Each formula
-    weights the base mortality risk alongside condition-specific factors
-    (e.g. pneumonia → respiratory, cardiovascular → cardiac).  This is clearly
-    disclosed in the UI disclaimer and in this docstring.
+    These are clinically-informed heuristics drawn from the Long COVID risk-factor
+    literature, NOT direct outputs of the trained mortality model. Each formula
+    blends the base mortality risk with condition-specific factors (e.g. pneumonia
+    weights respiratory, cardiovascular weights cardiac). The UI states this clearly
+    so the heuristic is never mistaken for a model prediction.
     """
     # Uses only the 9 deployed-model features (no icu/intubed) so the heuristic
     # layer is consistent with the model's actual inputs.
@@ -956,7 +952,7 @@ def lc_risks(pt, base):
 # ─────────────────────────────────────────────────────────────────────────────
 # Model
 # ─────────────────────────────────────────────────────────────────────────────
-@st.cache_data(show_spinner="Loading dataset...")   # Fix 16: separate data cache
+@st.cache_data(show_spinner="Loading dataset...")   # cache the dataframe across reruns
 def load_dataset(path: str) -> pd.DataFrame:
     """Load and preprocess the COVID dataset; raises a clear error if missing."""
     try:
@@ -1284,8 +1280,8 @@ def find_sample_patients(_imp, _sc, _model):
     return samples, scores
 
 
-# Fix 15: Wrap startup model loading so a missing CSV shows a clear UI error
-# instead of crashing the app with a traceback.
+# Load the models at startup; a missing artifact shows a friendly UI error
+# instead of a raw traceback.
 try:
     imp_m, sc_m, model_m, mdl_metrics = load_models()
 except Exception as _startup_err:

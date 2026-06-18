@@ -16,19 +16,19 @@ covid_analysis.log
 # ── Large model artifacts NOT needed by the deployed app ────────────────────
 # The app only loads imputer.joblib, scaler.joblib and model_primary_deployed.joblib.
 # These others are big (Stacking 121MB exceeds GitHub's 100MB limit) and unused at runtime.
-powerbi_export/models/model_Stacking.joblib
-powerbi_export/models/model_RF.joblib
-powerbi_export/models/model_GB.joblib
-powerbi_export/models/model_XGBoost.joblib
-powerbi_export/models/model_LR.joblib
+analysis_output/models/model_Stacking.joblib
+analysis_output/models/model_RF.joblib
+analysis_output/models/model_GB.joblib
+analysis_output/models/model_XGBoost.joblib
+analysis_output/models/model_LR.joblib
 
 # ── Local editor / agent settings ───────────────────────────────────────────
 .claude/
 
 # ── Large analysis CSVs NOT needed by the deployed app ──────────────────────
-# The app reads only powerbi_export/advanced/*.csv and the embedded PNGs.
+# The app reads only analysis_output/advanced/*.csv and the embedded PNGs.
 # These raw/cleaned cohort dumps are large and unused at runtime.
-powerbi_export/core_data/
+analysis_output/core_data/
 
 # ── Internal docs (planning/handoff/notes) — keep private, not for public repo ─
 REPORT_NOTES.md

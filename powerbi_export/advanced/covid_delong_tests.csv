@@ -1,7 +1,0 @@
-model_vs_LR,auc_model,auc_LR,delta_auc,p_value,verdict
-RF,0.8657,0.8877,-0.022,2.833134391450476e-42,sig. worse
-GB,0.8881,0.8877,0.0003,0.2588783867110952,no sig. difference
-Ensemble,0.8863,0.8877,-0.0015,0.0007324722702215815,sig. worse
-Primary,0.8878,0.8877,0.0,0.41399444831089893,no sig. difference
-XGBoost,0.8879,0.8877,0.0002,0.5939526508024868,no sig. difference
-Stacking,0.8876,0.8877,-0.0001,0.24317756881182073,no sig. difference

@@ -1,0 +1,238 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — Long COVID{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1>Analysis <span>Dashboard</span></h1>
+  <p>Pre-generated results from the full 13-phase pipeline — charts, metrics, and fairness audits.</p>
+</div>
+
+<div id="no-export" class="alert alert-warning hidden">
+  ⚠️ No pre-generated results found. <a href="/pipeline" style="color:inherit;text-decoration:underline">Run the pipeline first</a> to populate the dashboard.
+</div>
+
+<div id="dash-content" class="hidden">
+
+  <!-- KPI row -->
+  <div class="grid-4" id="kpi-row">
+    <div class="stat">
+      <div class="stat-label">PATIENTS ANALYSED</div>
+      <div class="stat-value" id="kpi-patients">—</div>
+      <div class="stat-sub">test-set predictions</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">AVG RISK SCORE</div>
+      <div class="stat-value" id="kpi-avg-risk">—</div>
+      <div class="stat-sub">0–100 scale</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">CALIBRATION ECE</div>
+      <div class="stat-value" id="kpi-ece">—</div>
+      <div class="stat-sub">expected calibration error</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">PRIMARY MODEL</div>
+      <div class="stat-value" style="font-size:1.1rem;padding-top:.3rem">Calibrated LR</div>
+      <div class="stat-sub">isotonic + tuned C</div>
+    </div>
+  </div>
+
+  <!-- AUC table -->
+  <div class="section-title">Model Performance</div>
+  <div class="card" id="auc-card">
+    <div class="card-title">AUC Confidence Intervals (Bootstrap, n=300)</div>
+    <table id="auc-table">
+      <thead><tr><th>Model</th><th>AUC</th><th>95% CI Lower</th><th>95% CI Upper</th></tr></thead>
+      <tbody id="auc-tbody"></tbody>
+    </table>
+  </div>
+
+  <!-- Risk distribution -->
+  <div class="section-title">Risk Distribution</div>
+  <div class="card">
+    <div class="card-title">Patient Risk Level Breakdown</div>
+    <div id="risk-bars" style="margin-top:.5rem"></div>
+  </div>
+
+  <!-- Cost-benefit -->
+  <div class="section-title">Cost-Benefit Analysis</div>
+  <div class="card" id="cb-card">
+    <div class="card-title">Healthcare Savings Scenarios</div>
+    <table id="cb-table">
+      <thead>
+        <tr>
+          <th>Scenario</th>
+          <th>Patients Intervened</th>
+          <th>Prevented</th>
+          <th>Net Savings</th>
+          <th>ROI</th>
+          <th>Payback (yrs)</th>
+        </tr>
+      </thead>
+      <tbody id="cb-tbody"></tbody>
+    </table>
+  </div>
+
+  <!-- SHAP importance -->
+  <div class="section-title">SHAP Feature Importance</div>
+  <div class="card">
+    <div class="card-title">Mean |SHAP| — Top Predictors</div>
+    <div id="shap-bars" style="margin-top:.5rem"></div>
+  </div>
+
+  <!-- Fairness -->
+  <div class="section-title">Fairness Audit</div>
+  <div class="card" id="fair-card">
+    <div class="card-title">AUC by Demographic Group</div>
+    <table id="fair-table">
+      <thead><tr><th>Group</th><th>Subgroup</th><th>AUC</th><th>Status</th></tr></thead>
+      <tbody id="fair-tbody"></tbody>
+    </table>
+  </div>
+
+  <!-- Plots -->
+  <div class="section-title">Visualisations</div>
+  <div class="tabs" data-group="plots">
+    <button class="tab-btn active" data-tab="model">Model</button>
+    <button class="tab-btn" data-tab="eda">EDA</button>
+    <button class="tab-btn" data-tab="shap">SHAP</button>
+    <button class="tab-btn" data-tab="fairness">Fairness</button>
+    <button class="tab-btn" data-tab="calibration">Calibration</button>
+    <button class="tab-btn" data-tab="advanced">Advanced</button>
+  </div>
+  <div data-tab-group="plots" data-tab="model"       class="tab-content active"><div class="plot-grid" id="plot-model"></div></div>
+  <div data-tab-group="plots" data-tab="eda"         class="tab-content"><div class="plot-grid" id="plot-eda"></div></div>
+  <div data-tab-group="plots" data-tab="shap"        class="tab-content"><div class="plot-grid" id="plot-shap"></div></div>
+  <div data-tab-group="plots" data-tab="fairness"    class="tab-content"><div class="plot-grid" id="plot-fair"></div></div>
+  <div data-tab-group="plots" data-tab="calibration" class="tab-content"><div class="plot-grid" id="plot-cal"></div></div>
+  <div data-tab-group="plots" data-tab="advanced"    class="tab-content"><div class="plot-grid" id="plot-adv"></div></div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+initTabs('body');
+
+function hbar(value, max, color) {
+  const pct = Math.min(100, (value / max) * 100).toFixed(1);
+  return `<div style="background:var(--surface2);border-radius:4px;height:24px;overflow:hidden;margin-bottom:.35rem">
+    <div style="height:100%;width:${pct}%;background:${color};border-radius:4px;transition:width .6s"></div>
+  </div>`;
+}
+
+function renderPlots(plots, containerId) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  if (!plots || plots.length === 0) {
+    el.innerHTML = '<p class="text-muted text-sm">No plots found in this category.</p>';
+    return;
+  }
+  el.innerHTML = plots.map(url =>
+    `<div class="plot-item" onclick="openLightbox('${url}')">
+       <img src="${url}" alt="plot" loading="lazy"/>
+     </div>`
+  ).join('');
+}
+
+async function loadDashboard() {
+  const res = await fetch('/api/dashboard');
+  const data = await res.json();
+
+  if (data.status === 'no_export') {
+    document.getElementById('no-export').classList.remove('hidden');
+    return;
+  }
+  document.getElementById('dash-content').classList.remove('hidden');
+
+  const m = data.metrics || {};
+
+  // KPIs
+  if (m.n_patients)  document.getElementById('kpi-patients').textContent  = m.n_patients.toLocaleString();
+  if (m.avg_risk)    document.getElementById('kpi-avg-risk').textContent   = m.avg_risk.toFixed(1);
+  if (m.calibration_ece !== undefined) document.getElementById('kpi-ece').textContent = m.calibration_ece.toFixed(4);
+
+  // AUC table
+  if (m.auc_table) {
+    const tbody = document.getElementById('auc-tbody');
+    tbody.innerHTML = m.auc_table.map(r => `
+      <tr>
+        <td class="mono">${r.model || '—'}</td>
+        <td><strong>${(r.auc||0).toFixed(4)}</strong></td>
+        <td>${(r.ci_lower||0).toFixed(4)}</td>
+        <td>${(r.ci_upper||0).toFixed(4)}</td>
+      </tr>`).join('');
+  }
+
+  // Risk distribution
+  if (m.risk_distribution) {
+    const order = ['LOW','MODERATE','MEDIUM','HIGH','CRITICAL'];
+    const colors = { LOW:'#10b981', MODERATE:'#f59e0b', MEDIUM:'#f59e0b', HIGH:'#e67e22', CRITICAL:'#ef4444' };
+    const total = Object.values(m.risk_distribution).reduce((a,b)=>a+b,0);
+    document.getElementById('risk-bars').innerHTML = order
+      .filter(k => m.risk_distribution[k])
+      .map(k => {
+        const n = m.risk_distribution[k];
+        const pct = ((n/total)*100).toFixed(1);
+        return `<div style="margin-bottom:.6rem">
+          <div class="flex justify-between text-sm mono" style="margin-bottom:.25rem">
+            <span>${k}</span><span>${n.toLocaleString()} (${pct}%)</span>
+          </div>
+          ${hbar(n, total*1.1, colors[k] || '#64748b')}
+        </div>`;
+      }).join('');
+  }
+
+  // Cost-benefit
+  if (m.cost_benefit) {
+    document.getElementById('cb-tbody').innerHTML = m.cost_benefit.map(r => `
+      <tr>
+        <td>${r.scenario||'—'}</td>
+        <td>${(r.patients_intervened||0).toLocaleString()}</td>
+        <td>${(r.patients_prevented||0).toLocaleString()}</td>
+        <td><strong>$${((r.total_savings||0)/1e6).toFixed(1)}M</strong></td>
+        <td>${(r.roi_percent||0).toFixed(0)}%</td>
+        <td>${(r.payback_years||0).toFixed(1)}</td>
+      </tr>`).join('');
+  }
+
+  // SHAP bars
+  if (m.shap_top) {
+    const max = Math.max(...m.shap_top.map(r=>r.mean_abs_shap));
+    document.getElementById('shap-bars').innerHTML = m.shap_top.map(r => `
+      <div style="margin-bottom:.5rem">
+        <div class="flex justify-between text-sm mono" style="margin-bottom:.2rem">
+          <span>${r.feature_name}</span>
+          <span>${r.mean_abs_shap.toFixed(4)}</span>
+        </div>
+        ${hbar(r.mean_abs_shap, max, 'var(--accent2)')}
+      </div>`).join('');
+  }
+
+  // Fairness
+  if (m.fairness) {
+    document.getElementById('fair-tbody').innerHTML = m.fairness.map(r => {
+      const auc = parseFloat(r.auc_score || r.auc || 0);
+      const ok = auc >= 0.7;
+      return `<tr>
+        <td>${r.demographic_group || r.group || '—'}</td>
+        <td>${r.subgroup || '—'}</td>
+        <td class="mono">${auc.toFixed(4)}</td>
+        <td><span class="badge ${ok?'badge-low':'badge-high'}">${ok?'FAIR':'REVIEW'}</span></td>
+      </tr>`;
+    }).join('');
+  }
+
+  // Plots
+  const p = data.plots || {};
+  renderPlots(p.model,      'plot-model');
+  renderPlots(p.eda,        'plot-eda');
+  renderPlots(p.shap,       'plot-shap');
+  renderPlots(p.fairness,   'plot-fair');
+  renderPlots(p.calibration,'plot-cal');
+  renderPlots(p.advanced,   'plot-adv');
+}
+
+loadDashboard();
+</script>
+{% endblock %}

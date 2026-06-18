@@ -1,0 +1,287 @@
+{% extends "base.html" %}
+{% block title %}Pipeline Runner — Long COVID{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1>Pipeline <span>Runner</span></h1>
+  <p>Upload a COVID CSV dataset and run the full 13-phase analysis pipeline. Results update live.</p>
+</div>
+
+<div class="alert alert-info">
+  ℹ️ Expected format: Mexican Government COVID-19 dataset CSV with columns such as
+  <code style="font-family:var(--mono);font-size:.8rem">age, sex, diabetes, hypertension, cardiovascular, pneumonia, obesity, asthma, copd, date_died</code>.
+</div>
+
+<div class="grid-2" style="gap:2rem; align-items:start">
+
+  <!-- Upload + controls -->
+  <div class="flex-col" style="gap:1.5rem">
+    <div class="card">
+      <div class="card-title">Upload Dataset</div>
+      <div class="upload-zone" id="drop-zone" onclick="document.getElementById('csv-input').click()">
+        <div class="upload-icon">📂</div>
+        <div class="upload-text">
+          <strong>Click to browse</strong> or drag & drop<br/>
+          CSV files only · No size limit
+        </div>
+        <div id="file-name" style="margin-top:1rem;font-family:var(--mono);font-size:.8rem;color:var(--accent)"></div>
+      </div>
+      <input type="file" id="csv-input" accept=".csv" style="display:none"/>
+
+      <div class="mt2 flex gap1">
+        <button class="btn btn-primary" id="run-btn" onclick="startPipeline()" disabled>
+          ▶ Run Analysis
+        </button>
+        <button class="btn btn-ghost" onclick="resetAll()">Reset</button>
+      </div>
+    </div>
+
+    <!-- Phase checklist -->
+    <div class="card">
+      <div class="card-title">Pipeline Phases</div>
+      <div id="phase-list">
+        {% set phases = [
+          ('1','EDA — 8 Visualisations'),
+          ('2','Preprocessing — Sentinel-aware cleaning'),
+          ('3','Statistical Tests — t-test + BH FDR'),
+          ('4','Model Training — LR/RF/GB/Ensemble'),
+          ('5','SHAP Analysis — Feature importance'),
+          ('6','Fairness Audit — Bias detection'),
+          ('7','Calibration — Probability validation'),
+          ('8','Cost-Benefit — ROI analysis'),
+          ('9','Clinical Explanations'),
+          ('10','Feature Interactions'),
+          ('11','Sensitivity Analysis'),
+          ('12','Export — CSV / Power BI'),
+        ] %}
+        {% for num, label in phases %}
+        <div class="flex items-center" style="gap:.75rem;padding:.5rem 0;border-bottom:1px solid var(--border)" id="phase-row-{{num}}">
+          <span class="phase-dot" id="phase-dot-{{num}}" style="width:8px;height:8px;border-radius:50%;background:var(--border);flex-shrink:0"></span>
+          <span class="mono" style="font-size:.72rem;color:var(--muted);width:1rem">{{num}}</span>
+          <span style="font-size:.85rem">{{label}}</span>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Status + log -->
+  <div class="flex-col" style="gap:1.5rem">
+    <div class="card">
+      <div class="card-title">Status</div>
+      <div class="flex items-center gap1 mt1" style="gap:.75rem">
+        <div id="status-dot" style="width:10px;height:10px;border-radius:50%;background:var(--muted)"></div>
+        <span id="status-text" class="mono" style="font-size:.85rem;color:var(--muted)">Waiting for upload…</span>
+      </div>
+      <div class="progress-track mt2">
+        <div class="progress-fill" id="progress-bar" style="width:0%"></div>
+      </div>
+      <div id="plot-count" class="text-muted text-sm mt1"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Live Log</div>
+      <div class="log-console" id="log-console">
+        <span class="text-muted">// Awaiting pipeline start…</span>
+      </div>
+    </div>
+
+    <!-- Results section -->
+    <div class="card hidden" id="results-card">
+      <div class="card-title">Generated Plots</div>
+      <div class="tabs" data-group="res-plots">
+        <button class="tab-btn active" data-tab="all">All</button>
+      </div>
+      <div data-tab-group="res-plots" data-tab="all" class="tab-content active">
+        <div class="plot-grid" id="result-plots"></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+let currentJobId = null;
+let pollTimer = null;
+let selectedFile = null;
+
+const PHASE_KEYWORDS = {
+  '1':  ['Phase 1','EDA','eda'],
+  '2':  ['Phase 2','Preprocessing','preprocessing'],
+  '3':  ['Phase 3','Statistical','statistical'],
+  '4':  ['Phase 4','Model Training','model_training','LR CV'],
+  '5':  ['Phase 5','SHAP','shap'],
+  '6':  ['Phase 6','Fairness','fairness'],
+  '7':  ['Phase 7','Calibration','calibration'],
+  '8':  ['Phase 8','Cost-Benefit','cost_benefit'],
+  '9':  ['Phase 9','Clinical','clinical'],
+  '10': ['Phase 10','Feature Interactions','interactions'],
+  '11': ['Phase 11','Sensitivity','sensitivity'],
+  '12': ['Phase 12','Export','export'],
+};
+
+// ── Drag & drop ─────────────────────────────────────────────────────────────
+const dropZone = document.getElementById('drop-zone');
+const csvInput = document.getElementById('csv-input');
+
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag'));
+dropZone.addEventListener('drop', e => {
+  e.preventDefault(); dropZone.classList.remove('drag');
+  const f = e.dataTransfer.files[0];
+  if (f && f.name.endsWith('.csv')) setFile(f);
+});
+csvInput.addEventListener('change', () => setFile(csvInput.files[0]));
+
+function setFile(file) {
+  selectedFile = file;
+  document.getElementById('file-name').textContent = `📄 ${file.name} (${(file.size/1024).toFixed(0)} KB)`;
+  document.getElementById('run-btn').disabled = false;
+  setStatus('ready', `File ready: ${file.name}`);
+}
+
+// ── Start pipeline ───────────────────────────────────────────────────────────
+async function startPipeline() {
+  if (!selectedFile) return;
+  document.getElementById('run-btn').disabled = true;
+  document.getElementById('results-card').classList.add('hidden');
+  document.getElementById('log-console').innerHTML = '';
+  setProgress(2);
+
+  const fd = new FormData();
+  fd.append('file', selectedFile);
+
+  setStatus('running', 'Uploading dataset…');
+  const res = await fetch('/api/pipeline/start', { method: 'POST', body: fd });
+  if (!res.ok) {
+    const err = await res.json();
+    setStatus('error', err.detail || 'Upload failed');
+    return;
+  }
+  const { job_id } = await res.json();
+  currentJobId = job_id;
+  addLog(`Job started: ${job_id}`, 'info');
+  setStatus('running', 'Pipeline running…');
+  setProgress(5);
+  pollTimer = setInterval(() => pollStatus(job_id), 2000);
+}
+
+// ── Poll ─────────────────────────────────────────────────────────────────────
+let lastLogLen = 0;
+async function pollStatus(jobId) {
+  try {
+    const res = await fetch(`/api/pipeline/status/${jobId}`);
+    const job = await res.json();
+
+    // New log lines
+    const logs = job.log || [];
+    for (let i = lastLogLen; i < logs.length; i++) {
+      const line = logs[i];
+      const cls = line.includes('✅') ? 'ok' : line.includes('❌') ? 'err' : '';
+      addLog(line, cls);
+      updatePhases(line);
+    }
+    lastLogLen = logs.length;
+
+    // Progress heuristic
+    const progress = Math.min(95, 5 + (lastLogLen / 80) * 90);
+    setProgress(progress);
+
+    if (job.status === 'done') {
+      clearInterval(pollTimer);
+      setStatus('done', `Complete — ${(job.plots||[]).length} plots generated`);
+      setProgress(100);
+      markAllPhasesDone();
+      renderResultPlots(job.plots || []);
+      document.getElementById('results-card').classList.remove('hidden');
+    } else if (job.status === 'error') {
+      clearInterval(pollTimer);
+      setStatus('error', job.error || 'Pipeline failed');
+      addLog(job.error || 'Unknown error', 'err');
+    }
+  } catch(e) {
+    addLog('Polling error: ' + e.message, 'err');
+  }
+}
+
+// ── Helpers ──────────────────────────────────────────────────────────────────
+function setStatus(state, text) {
+  const dot = document.getElementById('status-dot');
+  const txt = document.getElementById('status-text');
+  txt.textContent = text;
+  const colors = { ready:'#f59e0b', running:'#00c2ff', done:'#10b981', error:'#ef4444' };
+  dot.style.background = colors[state] || 'var(--muted)';
+  if (state === 'running') dot.style.animation = 'pulse 1.2s infinite';
+  else dot.style.animation = '';
+}
+
+function setProgress(pct) {
+  document.getElementById('progress-bar').style.width = pct + '%';
+}
+
+function addLog(msg, cls='') {
+  const el = document.getElementById('log-console');
+  const line = document.createElement('div');
+  if (cls) line.classList.add(cls);
+  line.textContent = msg;
+  el.appendChild(line);
+  el.scrollTop = el.scrollHeight;
+}
+
+function updatePhases(logLine) {
+  for (const [num, keys] of Object.entries(PHASE_KEYWORDS)) {
+    if (keys.some(k => logLine.includes(k))) {
+      const dot = document.getElementById(`phase-dot-${num}`);
+      if (dot) {
+        dot.style.background = '#00c2ff';
+        dot.style.boxShadow = '0 0 6px #00c2ff';
+      }
+    }
+  }
+  if (logLine.includes('COMPLETE') || logLine.includes('complete')) {
+    for (let i = 1; i <= 12; i++) {
+      const dot = document.getElementById(`phase-dot-${i}`);
+      if (dot && dot.style.background === 'rgb(0, 194, 255)') {
+        dot.style.background = '#10b981';
+        dot.style.boxShadow = '0 0 6px #10b981';
+      }
+    }
+  }
+}
+
+function markAllPhasesDone() {
+  for (let i = 1; i <= 12; i++) {
+    const dot = document.getElementById(`phase-dot-${i}`);
+    if (dot) { dot.style.background = '#10b981'; dot.style.boxShadow = '0 0 6px #10b981'; }
+  }
+}
+
+function renderResultPlots(plots) {
+  const grid = document.getElementById('result-plots');
+  if (!plots.length) { grid.innerHTML = '<p class="text-muted text-sm">No plots generated.</p>'; return; }
+  grid.innerHTML = plots.map(url =>
+    `<div class="plot-item" onclick="openLightbox('${url}')">
+       <img src="${url}" alt="plot" loading="lazy"/>
+     </div>`
+  ).join('');
+  document.getElementById('plot-count').textContent = `${plots.length} plots ready`;
+}
+
+function resetAll() {
+  clearInterval(pollTimer);
+  currentJobId = null; lastLogLen = 0; selectedFile = null;
+  document.getElementById('file-name').textContent = '';
+  document.getElementById('run-btn').disabled = true;
+  document.getElementById('log-console').innerHTML = '<span class="text-muted">// Awaiting pipeline start…</span>';
+  document.getElementById('results-card').classList.add('hidden');
+  setProgress(0);
+  setStatus('idle', 'Waiting for upload…');
+  for (let i = 1; i <= 12; i++) {
+    const dot = document.getElementById(`phase-dot-${i}`);
+    if (dot) { dot.style.background = 'var(--border)'; dot.style.boxShadow = ''; }
+  }
+}
+</script>
+{% endblock %}

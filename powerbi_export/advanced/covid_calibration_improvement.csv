@@ -1,2 +1,0 @@
-method,brier_before,brier_after,ece_before,ece_after
-isotonic,0.1353,0.0778,0.195,0.0022

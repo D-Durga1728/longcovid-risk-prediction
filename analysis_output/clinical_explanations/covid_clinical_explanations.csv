@@ -1,0 +1,101 @@
+patient_id,risk_score,risk_level,recommendation,explanation
+07b0eb,61.7,HIGH,Specialist referral urgency: Within 1 week,Long COVID Risk: 62/100 - HIGH | Clinical Urgency: Within 1 week
+01bbb8,8.0,LOW,Specialist referral urgency: As scheduled,Long COVID Risk: 8/100 - LOW | Clinical Urgency: As scheduled
+115252,0.7,LOW,Specialist referral urgency: As scheduled,Long COVID Risk: 1/100 - LOW | Clinical Urgency: As scheduled
+0a3408,2.2,LOW,Specialist referral urgency: As scheduled,Long COVID Risk: 2/100 - LOW | Clinical Urgency: As scheduled
+05e23a,2.0,LOW,Specialist referral urgency: As scheduled,Long COVID Risk: 2/100 - LOW | Clinical Urgency: As scheduled
+1986fc,15.2,LOW,Specialist referral urgency: As scheduled,Long COVID Risk: 15/100 - LOW | Clinical Urgency: As scheduled
+158068,2.8,LOW,Specialist referral urgency: As scheduled,Long COVID Risk: 3/100 - LOW | Clinical Urgency: As scheduled
+174fc5,0.2,LOW,Specialist referral urgency: As scheduled,Long COVID Risk: 0/100 - LOW | Clinical Urgency: As scheduled
+11fde8,13.3,LOW,Specialist referral urgency: As scheduled,Long COVID Risk: 13/100 - LOW | Clinical Urgency: As scheduled
+15895d,44.5,MEDIUM,Specialist referral urgency: Within 2 weeks,Long COVID Risk: 45/100 - MEDIUM | Clinical Urgency: Within 2 weeks
+015f50,4.6,LOW,Specialist referral urgency: As scheduled,Long COVID Risk: 5/100 - LOW | Clinical Urgency: As scheduled
+1b0628,6.3,LOW,Specialist referral urgency: As scheduled,Long COVID Risk: 6/100 - LOW | Clinical Urgency: As scheduled
+031c16,0.2,LOW,Specialist referral urgency: As scheduled,Long COVID Risk: 0/100 - LOW | Clinical Urgency: As scheduled
+1070bf,37.7,MEDIUM,Specialist referral urgency: Within 2 weeks,Long COVID Risk: 38/100 - MEDIUM | Clinical Urgency: Within 2 weeks
+z21f6f,1.0,LOW,Specialist referral urgency: As scheduled,Long COVID Risk: 1/100 - LOW | Clinical Urgency: As scheduled
+056be7,4.6,LOW,Specialist referral urgency: As scheduled,Long COVID Risk: 5/100 - LOW | Clinical Urgency: As scheduled
+03d01f,0.2,LOW,Specialist referral urgency: As scheduled,Long COVID Risk: 0/100 - LOW | Clinical Urgency: As scheduled
+1da5ae,2.0,LOW,Specialist referral urgency: As scheduled,Long COVID Risk: 2/100 - LOW | Clinical Urgency: As scheduled
+07358c,2.0,LOW,Specialist referral urgency: As scheduled,Long COVID Risk: 2/100 - LOW | Clinical Urgency: As scheduled
+1849f5,0.2,LOW,Specialist referral urgency: As scheduled,Long COVID Risk: 0/100 - LOW | Clinical Urgency: As scheduled
+037f0a,1.0,LOW,Specialist referral urgency: As scheduled,Long COVID Risk: 1/100 - LOW | Clinical Urgency: As scheduled
+0bfdf4,0.5,LOW,Specialist referral urgency: As scheduled,Long COVID Risk: 1/100 - LOW | Clinical Urgency: As scheduled
+0a1ed7,7.3,LOW,Specialist referral urgency: As scheduled,Long COVID Risk: 7/100 - LOW | Clinical Urgency: As scheduled
+062d14,2.6,LOW,Specialist referral urgency: As scheduled,Long COVID Risk: 3/100 - LOW | Clinical Urgency: As scheduled
+0e6e1d,10.7,LOW,Specialist referral urgency: As scheduled,Long COVID Risk: 11/100 - LOW | Clinical Urgency: As scheduled
+15b40a,0.3,LOW,Specialist referral urgency: As scheduled,Long COVID Risk: 0/100 - LOW | Clinical Urgency: As scheduled
+1e4fe2,2.0,LOW,Specialist referral urgency: As scheduled,Long COVID Risk: 2/100 - LOW | Clinical Urgency: As scheduled
+1e36d2,0.2,LOW,Specialist referral urgency: As scheduled,Long COVID Risk: 0/100 - LOW | Clinical Urgency: As scheduled
+06ed96,0.2,LOW,Specialist referral urgency: As scheduled,Long COVID Risk: 0/100 - LOW | Clinical Urgency: As scheduled
+48205,35.2,MEDIUM,Specialist referral urgency: Within 2 weeks,Long COVID Risk: 35/100 - MEDIUM | Clinical Urgency: Within 2 weeks
+0ebe89,0.2,LOW,Specialist referral urgency: As scheduled,Long COVID Risk: 0/100 - LOW | Clinical Urgency: As scheduled
+060cc4,3.6,LOW,Specialist referral urgency: As scheduled,Long COVID Risk: 4/100 - LOW | Clinical Urgency: As scheduled
+0eb9d8,0.2,LOW,Specialist referral urgency: As scheduled,Long COVID Risk: 0/100 - LOW | Clinical Urgency: As scheduled
+105c84,25.6,LOW,Specialist referral urgency: As scheduled,Long COVID Risk: 26/100 - LOW | Clinical Urgency: As scheduled
+1cfd56,2.7,LOW,Specialist referral urgency: As scheduled,Long COVID Risk: 3/100 - LOW | Clinical Urgency: As scheduled
+061dbf,7.3,LOW,Specialist referral urgency: As scheduled,Long COVID Risk: 7/100 - LOW | Clinical Urgency: As scheduled
+0baf0f,2.0,LOW,Specialist referral urgency: As scheduled,Long COVID Risk: 2/100 - LOW | Clinical Urgency: As scheduled
+0421b9,0.3,LOW,Specialist referral urgency: As scheduled,Long COVID Risk: 0/100 - LOW | Clinical Urgency: As scheduled
+14e6c9,1.0,LOW,Specialist referral urgency: As scheduled,Long COVID Risk: 1/100 - LOW | Clinical Urgency: As scheduled
+05b1cd,0.7,LOW,Specialist referral urgency: As scheduled,Long COVID Risk: 1/100 - LOW | Clinical Urgency: As scheduled
+180376,5.2,LOW,Specialist referral urgency: As scheduled,Long COVID Risk: 5/100 - LOW | Clinical Urgency: As scheduled
+1389aa,2.4,LOW,Specialist referral urgency: As scheduled,Long COVID Risk: 2/100 - LOW | Clinical Urgency: As scheduled
+0fd043,32.9,MEDIUM,Specialist referral urgency: Within 2 weeks,Long COVID Risk: 33/100 - MEDIUM | Clinical Urgency: Within 2 weeks
+1aeff2,11.7,LOW,Specialist referral urgency: As scheduled,Long COVID Risk: 12/100 - LOW | Clinical Urgency: As scheduled
+0f5e19,7.3,LOW,Specialist referral urgency: As scheduled,Long COVID Risk: 7/100 - LOW | Clinical Urgency: As scheduled
+1b5166,0.2,LOW,Specialist referral urgency: As scheduled,Long COVID Risk: 0/100 - LOW | Clinical Urgency: As scheduled
+0fdf68,0.3,LOW,Specialist referral urgency: As scheduled,Long COVID Risk: 0/100 - LOW | Clinical Urgency: As scheduled
+0cb805,0.5,LOW,Specialist referral urgency: As scheduled,Long COVID Risk: 0/100 - LOW | Clinical Urgency: As scheduled
+06532e,4.6,LOW,Specialist referral urgency: As scheduled,Long COVID Risk: 5/100 - LOW | Clinical Urgency: As scheduled
+1a055b,7.8,LOW,Specialist referral urgency: As scheduled,Long COVID Risk: 8/100 - LOW | Clinical Urgency: As scheduled
+0b3f40,1.5,LOW,Specialist referral urgency: As scheduled,Long COVID Risk: 2/100 - LOW | Clinical Urgency: As scheduled
+08296b,39.9,MEDIUM,Specialist referral urgency: Within 2 weeks,Long COVID Risk: 40/100 - MEDIUM | Clinical Urgency: Within 2 weeks
+14b22a,0.1,LOW,Specialist referral urgency: As scheduled,Long COVID Risk: 0/100 - LOW | Clinical Urgency: As scheduled
+049ed7,1.8,LOW,Specialist referral urgency: As scheduled,Long COVID Risk: 2/100 - LOW | Clinical Urgency: As scheduled
+1967d5,34.3,MEDIUM,Specialist referral urgency: Within 2 weeks,Long COVID Risk: 34/100 - MEDIUM | Clinical Urgency: Within 2 weeks
+1b13ca,0.8,LOW,Specialist referral urgency: As scheduled,Long COVID Risk: 1/100 - LOW | Clinical Urgency: As scheduled
+1248d0,1.0,LOW,Specialist referral urgency: As scheduled,Long COVID Risk: 1/100 - LOW | Clinical Urgency: As scheduled
+19093f,3.3,LOW,Specialist referral urgency: As scheduled,Long COVID Risk: 3/100 - LOW | Clinical Urgency: As scheduled
+0e57fe,37.7,MEDIUM,Specialist referral urgency: Within 2 weeks,Long COVID Risk: 38/100 - MEDIUM | Clinical Urgency: Within 2 weeks
+0321fd,39.6,MEDIUM,Specialist referral urgency: Within 2 weeks,Long COVID Risk: 40/100 - MEDIUM | Clinical Urgency: Within 2 weeks
+1219b7,1.0,LOW,Specialist referral urgency: As scheduled,Long COVID Risk: 1/100 - LOW | Clinical Urgency: As scheduled
+03f77d,4.0,LOW,Specialist referral urgency: As scheduled,Long COVID Risk: 4/100 - LOW | Clinical Urgency: As scheduled
+1148d7,8.0,LOW,Specialist referral urgency: As scheduled,Long COVID Risk: 8/100 - LOW | Clinical Urgency: As scheduled
+0dd2ee,2.0,LOW,Specialist referral urgency: As scheduled,Long COVID Risk: 2/100 - LOW | Clinical Urgency: As scheduled
+1917a2,15.2,LOW,Specialist referral urgency: As scheduled,Long COVID Risk: 15/100 - LOW | Clinical Urgency: As scheduled
+1d0b0c,0.2,LOW,Specialist referral urgency: As scheduled,Long COVID Risk: 0/100 - LOW | Clinical Urgency: As scheduled
+05861e,13.3,LOW,Specialist referral urgency: As scheduled,Long COVID Risk: 13/100 - LOW | Clinical Urgency: As scheduled
+02ec65,17.6,LOW,Specialist referral urgency: As scheduled,Long COVID Risk: 18/100 - LOW | Clinical Urgency: As scheduled
+0f7850,52.1,HIGH,Specialist referral urgency: Within 1 week,Long COVID Risk: 52/100 - HIGH | Clinical Urgency: Within 1 week
+14572c,0.2,LOW,Specialist referral urgency: As scheduled,Long COVID Risk: 0/100 - LOW | Clinical Urgency: As scheduled
+03fff1,46.8,MEDIUM,Specialist referral urgency: Within 2 weeks,Long COVID Risk: 47/100 - MEDIUM | Clinical Urgency: Within 2 weeks
+1dce65,0.4,LOW,Specialist referral urgency: As scheduled,Long COVID Risk: 0/100 - LOW | Clinical Urgency: As scheduled
+1bc6fa,2.7,LOW,Specialist referral urgency: As scheduled,Long COVID Risk: 3/100 - LOW | Clinical Urgency: As scheduled
+1480f5,0.4,LOW,Specialist referral urgency: As scheduled,Long COVID Risk: 0/100 - LOW | Clinical Urgency: As scheduled
+143131,2.0,LOW,Specialist referral urgency: As scheduled,Long COVID Risk: 2/100 - LOW | Clinical Urgency: As scheduled
+02871f,29.6,LOW,Specialist referral urgency: As scheduled,Long COVID Risk: 30/100 - LOW | Clinical Urgency: As scheduled
+40805,1.2,LOW,Specialist referral urgency: As scheduled,Long COVID Risk: 1/100 - LOW | Clinical Urgency: As scheduled
+176613,38.9,MEDIUM,Specialist referral urgency: Within 2 weeks,Long COVID Risk: 39/100 - MEDIUM | Clinical Urgency: Within 2 weeks
+01778e,7.3,LOW,Specialist referral urgency: As scheduled,Long COVID Risk: 7/100 - LOW | Clinical Urgency: As scheduled
+30067,17.6,LOW,Specialist referral urgency: As scheduled,Long COVID Risk: 18/100 - LOW | Clinical Urgency: As scheduled
+0de86f,28.5,LOW,Specialist referral urgency: As scheduled,Long COVID Risk: 28/100 - LOW | Clinical Urgency: As scheduled
+16d1a0,0.2,LOW,Specialist referral urgency: As scheduled,Long COVID Risk: 0/100 - LOW | Clinical Urgency: As scheduled
+169a74,53.7,HIGH,Specialist referral urgency: Within 1 week,Long COVID Risk: 54/100 - HIGH | Clinical Urgency: Within 1 week
+114850,41.7,MEDIUM,Specialist referral urgency: Within 2 weeks,Long COVID Risk: 42/100 - MEDIUM | Clinical Urgency: Within 2 weeks
+1cc4ab,0.1,LOW,Specialist referral urgency: As scheduled,Long COVID Risk: 0/100 - LOW | Clinical Urgency: As scheduled
+04c855,38.9,MEDIUM,Specialist referral urgency: Within 2 weeks,Long COVID Risk: 39/100 - MEDIUM | Clinical Urgency: Within 2 weeks
+1a6b1d,0.2,LOW,Specialist referral urgency: As scheduled,Long COVID Risk: 0/100 - LOW | Clinical Urgency: As scheduled
+08baea,58.2,HIGH,Specialist referral urgency: Within 1 week,Long COVID Risk: 58/100 - HIGH | Clinical Urgency: Within 1 week
+1651ab,3.6,LOW,Specialist referral urgency: As scheduled,Long COVID Risk: 4/100 - LOW | Clinical Urgency: As scheduled
+6.00E+126,0.4,LOW,Specialist referral urgency: As scheduled,Long COVID Risk: 0/100 - LOW | Clinical Urgency: As scheduled
+13febc,34.2,MEDIUM,Specialist referral urgency: Within 2 weeks,Long COVID Risk: 34/100 - MEDIUM | Clinical Urgency: Within 2 weeks
+16f187,3.6,LOW,Specialist referral urgency: As scheduled,Long COVID Risk: 4/100 - LOW | Clinical Urgency: As scheduled
+0a4e79,2.0,LOW,Specialist referral urgency: As scheduled,Long COVID Risk: 2/100 - LOW | Clinical Urgency: As scheduled
+01c96c,0.4,LOW,Specialist referral urgency: As scheduled,Long COVID Risk: 0/100 - LOW | Clinical Urgency: As scheduled
+161396,4.6,LOW,Specialist referral urgency: As scheduled,Long COVID Risk: 5/100 - LOW | Clinical Urgency: As scheduled
+070d21,33.6,MEDIUM,Specialist referral urgency: Within 2 weeks,Long COVID Risk: 34/100 - MEDIUM | Clinical Urgency: Within 2 weeks
+139123,0.2,LOW,Specialist referral urgency: As scheduled,Long COVID Risk: 0/100 - LOW | Clinical Urgency: As scheduled
+2.70E+89,0.7,LOW,Specialist referral urgency: As scheduled,Long COVID Risk: 1/100 - LOW | Clinical Urgency: As scheduled
+147955,9.7,LOW,Specialist referral urgency: As scheduled,Long COVID Risk: 10/100 - LOW | Clinical Urgency: As scheduled
+16526b,57.5,HIGH,Specialist referral urgency: Within 1 week,Long COVID Risk: 57/100 - HIGH | Clinical Urgency: Within 1 week

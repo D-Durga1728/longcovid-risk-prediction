@@ -1,0 +1,11 @@
+feature_1,feature_2,interaction_strength
+pneumonia,age,0.18174952477894746
+pneumonia,diabetes,0.026120840922646712
+pneumonia,hypertension,0.02083504901584312
+age,diabetes,0.01957859845524241
+age,hypertension,0.015616689358680613
+pneumonia,sex,0.008405641798263136
+age,sex,0.006300359395555036
+diabetes,hypertension,0.002244413342882845
+diabetes,sex,0.0009054806923261807
+hypertension,sex,0.0007222483634192262

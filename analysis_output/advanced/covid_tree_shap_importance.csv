@@ -1,0 +1,10 @@
+feature_name,tree_shap_importance
+pneumonia,1.4196184
+age,1.0576043
+sex,0.27147183
+diabetes,0.17827156
+hypertension,0.14521208
+obesity,0.0978406
+copd,0.020168925
+asthma,0.010974118
+cardiovascular,0.008504232

@@ -1,7 +1,7 @@
 """
 Long COVID Risk Assessment System
 MSc Data Analytics Research Prototype - Dublin City University
-Author: Durga Prasad Narsing (A00050350) | Supervisor: Dr Martin Crane
+Author: Durga Prasad Narsing (A00050350) | Supervisors: Dr Martin Crane & Dr Tai Tan Mai
 """
 
 import streamlit as st
@@ -9,11 +9,12 @@ import pandas as pd
 import numpy as np
 import os
 import warnings
+from datetime import datetime
 warnings.filterwarnings("ignore")
 
 st.set_page_config(
     page_title="Long COVID Risk Assessment - DCU",
-    page_icon="🧬",
+    page_icon=None,
     layout="wide",
     initial_sidebar_state="collapsed",
 )
@@ -55,8 +56,8 @@ header[data-testid="stHeader"],
    The whole bar is one HTML flex row. Sticky is applied to the stLayoutWrapper
    (its parent spans the full page height, so sticky has room). Everything scales
    with the viewport via clamp()/vw, and links wrap on very small screens. */
-/* The navbar's element-container is the sticky element (its parent — the main
-   vertical block — spans the full page height, so sticky has room). Both
+/* The navbar's element-container is the sticky element (its parent - the main
+   vertical block - spans the full page height, so sticky has room). Both
    stElementContainer and stLayoutWrapper are covered across Streamlit versions. */
 [data-testid="stElementContainer"]:has(.dcu-navbar),
 [data-testid="stLayoutWrapper"]:has(.dcu-navbar) {
@@ -129,7 +130,7 @@ header[data-testid="stHeader"],
     .dcu-navbar .nav-row1 .risk-btn { margin-left: 0 !important; }
 }
 
-/* ── Scrollbar — force visible on main content and sidebar ── */
+/* ── Scrollbar - force visible on main content and sidebar ── */
 html { overflow-y: scroll !important; }
 ::-webkit-scrollbar { width: 8px; height: 8px; }
 ::-webkit-scrollbar-track { background: #DBEAFE; border-radius: 4px; }
@@ -140,7 +141,7 @@ html { overflow-y: scroll !important; }
 
 /* ── Remove ONLY the unwanted gaps ─────────────────────────────────────────
    Collapse the blank vertical space left by the zero-height helper iframes
-   (nav / scroll JavaScript). IMPORTANT: do NOT display:none them — the iframe
+   (nav / scroll JavaScript). IMPORTANT: do NOT display:none them - the iframe
    must stay in the DOM so its JS still runs (sticky nav + scroll-to). We only
    zero their height/margin so they take no space. Normal spacing is preserved
    everywhere else. */
@@ -195,7 +196,7 @@ html { overflow-y: scroll !important; }
 }
 .nav-sl:hover { background: #DBEAFE; color: #1D4ED8; }
 
-/* ── Tool-page nav link buttons — scoped to stColumn that CONTAINS .nav-tl ──
+/* ── Tool-page nav link buttons - scoped to stColumn that CONTAINS .nav-tl ──
    NOTE: st.button() renders as a SIBLING of the .nav-tl div, not inside it.
    So ".nav-tl button" does NOT work. Use :has(.nav-tl) on the parent stColumn. */
 [data-testid="stColumn"]:has(.nav-tl) [data-testid="stButton"] button,
@@ -292,7 +293,7 @@ html { overflow-y: scroll !important; }
 .nb-home button         { background: #374151 !important; }
 .nb-home button:hover   { background: #1F2937 !important; }
 .nb-home button:active  { background: #111827 !important; }
-/* Primary CTA — DCU Burnt Gold accent with Slate Blue text */
+/* Primary CTA - DCU Burnt Gold accent with Slate Blue text */
 .nb-start button,
 .nb-start button:hover,
 .nb-start button:focus,
@@ -318,7 +319,7 @@ html { overflow-y: scroll !important; }
 .nb-start button, .nb-home button,
 .nb-start button p, .nb-home button p { white-space: nowrap !important; }
 
-/* ── Hero Start-Assessment CTA — DCU Burnt Gold pill ── */
+/* ── Hero Start-Assessment CTA - DCU Burnt Gold pill ── */
 [data-testid="stColumn"]:has(.hero-cta) [data-testid="stButton"] button {
     background: #FFA700 !important; color: #1A3C66 !important;
     border: none !important; border-radius: 50px !important;
@@ -388,7 +389,7 @@ html { overflow-y: scroll !important; }
 .sb-reset button:hover  { background: #EFF6FF !important; color: #1A3C66 !important; }
 .sb-reset button p, .sb-reset button:hover p { color: #1A3C66 !important; }
 
-/* ── Sample patient buttons (no wrapper class — general stButton in form) ── */
+/* ── Sample patient buttons (no wrapper class - general stButton in form) ── */
 [data-testid="stButton"] button {
     background: #EFF6FF !important;
     color: #1A3C66 !important;
@@ -403,7 +404,7 @@ html { overflow-y: scroll !important; }
 }
 [data-testid="stButton"] button p { color: #1A3C66 !important; }
 
-/* ── Sample patients — ONE clean table (Level | Threshold | Score | Load) ───
+/* ── Sample patients - ONE clean table (Level | Threshold | Score | Load) ───
    Everything is wrapped in a single full-width stColumn containing
    .sp-patient-section, so these :has() rules scope tightly to that block. */
 
@@ -417,7 +418,7 @@ html { overflow-y: scroll !important; }
     margin: 0 !important;
 }
 
-/* Header cells — larger, bolder, clearly separated above the rows */
+/* Header cells - larger, bolder, clearly separated above the rows */
 .sp-th {
     display: flex; align-items: center; justify-content: center;
     min-height: 28px; padding: 0 12px 4px; margin-bottom: 4px;
@@ -425,14 +426,14 @@ html { overflow-y: scroll !important; }
     text-transform: uppercase; letter-spacing: .05em; text-align: center;
     border-bottom: 2px solid #BFDBFE;
 }
-/* Data cells (Level / Threshold / Score) — compact, uniform height, centred */
+/* Data cells (Level / Threshold / Score) - compact, uniform height, centred */
 .sp-cell {
     display: flex; align-items: center; justify-content: center;
     min-height: 32px; padding: 3px 12px; border-radius: 7px;
     border: 1px solid rgba(191,219,254,0.55);
 }
 
-/* Uniform Load button — clean navy, matches the form's primary action */
+/* Uniform Load button - clean navy, matches the form's primary action */
 [data-testid="stColumn"]:has(.sp-patient-section) [data-testid="stButton"] button {
     min-height: 32px !important;
     height: 32px !important;
@@ -740,7 +741,7 @@ html, body, [class*="css"],
 .dcu-navbar .proj-title { border-left-color: #B8860B !important; }
 .dcu-navbar .proj-title .pt2 { color: #5B6675 !important; }
 
-/* CURATED MOTION — keep meaningful entrance/feedback, drop the gimmicks.
+/* CURATED MOTION - keep meaningful entrance/feedback, drop the gimmicks.
    We deliberately KEEP: hero/section fade-in, risk-ring fill, bar growth, and a
    subtle card-hover lift (motion that conveys cause→effect). We DISABLE only the
    decorative loops that read as "demo": the pulsing badge and the floating glow.
@@ -771,7 +772,7 @@ html, body, [class*="css"],
     letter-spacing: .04em !important;
 }
 
-/* Solid restrained headers/sections — replace the vivid blue gradients */
+/* Solid restrained headers/sections - replace the vivid blue gradients */
 .hero, .tool-hdr, .ethics, .footer {
     background: #1A3C66 !important;
     border-radius: 6px !important;
@@ -811,7 +812,7 @@ html, body, [class*="css"],
 .mtl-num { background: #1A3C66 !important; color: #fff !important; box-shadow: none !important; }
 .mtl-arrow { color: #9AA7B5 !important; }
 
-/* Flatten the gold pills — keep the colour, drop the heavy glow */
+/* Flatten the gold pills - keep the colour, drop the heavy glow */
 .dcu-navbar .risk-btn, .nb-start button,
 [data-testid="stColumn"]:has(.hero-cta) [data-testid="stButton"] button,
 [data-testid="stColumn"]:has(.proj-logo) [data-testid="stButton"] button {
@@ -830,7 +831,7 @@ html, body, [class*="css"],
 .div { border-top: 1px solid #E2E8F0 !important; }
 
 /* Hide the large decorative emoji icons (feature cards, who-can-use cards,
-   methodology steps) — they read as clip-art in an academic tool. */
+   methodology steps) - they read as clip-art in an academic tool. */
 .fc-icon, .wu-icon, .mtl-ic { display: none !important; }
 .fc-title, .mtl-t { margin-top: 0 !important; }
 
@@ -888,8 +889,8 @@ def _find_data():
     return "covid.csv"   # will surface a clear st.error below if missing
 
 DATA_PATH = _find_data()
-# Deployed model uses 9 acute-phase features (intubed & icu dropped — they were
-# severity proxies; the deployed calibrated LR in powerbi_export/models/ uses these 9).
+# Deployed model uses 9 acute-phase features (intubed & icu dropped - they were
+# severity proxies; the deployed calibrated LR in analysis_output/models/ uses these 9).
 FEAT_COLS  = ["age","sex","diabetes","hypertension","cardiovascular",
               "pneumonia","obesity","asthma","copd"]
 
@@ -923,7 +924,7 @@ def recovery(s, a, pt=None):
         comorb_keys = ["diabetes","hypertension","cardiovascular","obesity","asthma","copd","pneumonia"]
         comorb_count = sum(pt.get(k, 0) for k in comorb_keys)
         if comorb_count >= 3 and "(extended)" not in b:
-            b += " (extended — high comorbidity burden)"
+            b += " (extended - high comorbidity burden)"
     return b
 def bclr(p): return "#DC2626" if p>=70 else "#EA580C" if p>=50 else "#D97706" if p>=30 else "#059669"
 
@@ -982,14 +983,14 @@ def load_models():
     """
     Load the DEPLOYED, pre-trained pipeline (no live training):
       imputer (median) → scaler (StandardScaler) → calibrated tuned LR.
-    Artifacts live in powerbi_export/models/ (see STREAMLIT_HANDOFF.md).
+    Artifacts live in analysis_output/models/ (see STREAMLIT_HANDOFF.md).
     Metrics are the verified values from the advanced analysis / MODEL_CARD.md.
     """
     import joblib
     _base = os.path.dirname(os.path.abspath(__file__))
     _mdir_candidates = [
-        os.path.join(_base, "powerbi_export", "models"),
-        os.path.join("powerbi_export", "models"),
+        os.path.join(_base, "analysis_output", "models"),
+        os.path.join("analysis_output", "models"),
     ]
     _mdir = next((d for d in _mdir_candidates if os.path.isdir(d)), _mdir_candidates[0])
 
@@ -997,9 +998,9 @@ def load_models():
     scaler  = joblib.load(os.path.join(_mdir, "scaler.joblib"))
     model   = joblib.load(os.path.join(_mdir, "model_primary_deployed.joblib"))
 
-    # Verified metrics from powerbi_export/advanced/. These hardcoded values are
+    # Verified metrics from analysis_output/advanced/. These hardcoded values are
     # FALLBACKS; the block below overrides them by reading the final CSVs so the
-    # app always mirrors powerbi_export/advanced/ exactly.
+    # app always mirrors analysis_output/advanced/ exactly.
     eval_metrics = {
         "lr":  {"auc": 0.8877},
         "rf":  {"auc": 0.8657},
@@ -1024,8 +1025,8 @@ def load_models():
     }
 
     # ── Override from the FINAL advanced CSVs (source of truth) ───────────────
-    _adv = next((d for d in [os.path.join(_base, "powerbi_export", "advanced"),
-                             os.path.join("powerbi_export", "advanced")]
+    _adv = next((d for d in [os.path.join(_base, "analysis_output", "advanced"),
+                             os.path.join("analysis_output", "advanced")]
                  if os.path.isdir(d)), None)
 
     def _rd(_name):
@@ -1077,7 +1078,7 @@ def load_models():
 def load_shap_values():
     """
     Load Tree-SHAP feature importance for the deployed 9-feature model from
-    powerbi_export/advanced/covid_tree_shap_importance.csv. Returns a list of
+    analysis_output/advanced/covid_tree_shap_importance.csv. Returns a list of
     (pretty_label, importance_percent) tuples sorted descending.
     Falls back to the recorded values if the CSV is missing.
     """
@@ -1094,8 +1095,8 @@ def load_shap_values():
     ]
     _candidates = [
         os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                     "powerbi_export", "advanced", "covid_tree_shap_importance.csv"),
-        os.path.join("powerbi_export", "advanced", "covid_tree_shap_importance.csv"),
+                     "analysis_output", "advanced", "covid_tree_shap_importance.csv"),
+        os.path.join("analysis_output", "advanced", "covid_tree_shap_importance.csv"),
     ]
     for _p in _candidates:
         if os.path.isfile(_p):
@@ -1118,7 +1119,7 @@ def load_shap_values():
 def load_odds_ratios():
     """
     Load per-feature Odds Ratios (per +1 SD, 95% CI) from
-    powerbi_export/advanced/covid_odds_ratios_ci.csv. Returns
+    analysis_output/advanced/covid_odds_ratios_ci.csv. Returns
     {feature_name: {'or','lo','hi','p','sig'}}. Falls back to MODEL_CARD values.
     """
     _fallback = {
@@ -1134,8 +1135,8 @@ def load_odds_ratios():
     }
     _candidates = [
         os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                     "powerbi_export", "advanced", "covid_odds_ratios_ci.csv"),
-        os.path.join("powerbi_export", "advanced", "covid_odds_ratios_ci.csv"),
+                     "analysis_output", "advanced", "covid_odds_ratios_ci.csv"),
+        os.path.join("analysis_output", "advanced", "covid_odds_ratios_ci.csv"),
     ]
     for _p in _candidates:
         if os.path.isfile(_p):
@@ -1208,14 +1209,14 @@ def patient_factors(imputer, scaler, pt, top=4):
 @st.cache_data(show_spinner=False)
 def load_nomogram():
     """
-    Load the points-based nomogram tables from powerbi_export/advanced/:
+    Load the points-based nomogram tables from analysis_output/advanced/:
       covid_nomogram_points.csv      → feature, unit, points
       covid_nomogram_risk_lookup.csv → total_points, predicted_risk_pct
     Returns (points_df, lookup_df) or (None, None) if missing.
     """
     _adv = next((d for d in [os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                                          "powerbi_export", "advanced"),
-                             os.path.join("powerbi_export", "advanced")]
+                                          "analysis_output", "advanced"),
+                             os.path.join("analysis_output", "advanced")]
                  if os.path.isdir(d)), None)
     if not _adv:
         return None, None
@@ -1232,7 +1233,7 @@ def nomogram_score(pt):
     """
     Illustrative manual points score for a patient dict (sex encoded Female=1).
     Returns (total_points, risk_pct, points_breakdown) or None if tables missing.
-    This is a 'show-your-work' transparency panel — NOT the official prediction.
+    This is a 'show-your-work' transparency panel - NOT the official prediction.
     """
     nomo, lookup = load_nomogram()
     if nomo is None or lookup is None:
@@ -1260,7 +1261,7 @@ def find_sample_patients(_imp, _sc, _model):
     ensemble risk score falls closest to each target band centre:
       CRITICAL → 82%   HIGH → 60%   MEDIUM → 38%   LOW → 12%
     Underscored model args tell st.cache_data to skip hashing them.
-    Cached for the lifetime of the session — runs only once.
+    Cached for the lifetime of the session - runs only once.
     """
     df  = load_dataset(DATA_PATH)
     X   = df[FEAT_COLS]
@@ -1287,7 +1288,7 @@ try:
 except Exception as _startup_err:
     st.error(
         f"**Model initialisation failed:** {_startup_err}\n\n"
-        "Ensure `powerbi_export/models/` (imputer/scaler/model_primary_deployed) "
+        "Ensure `analysis_output/models/` (imputer/scaler/model_primary_deployed) "
         "and `covid.csv` are accessible, then rerun the app."
     )
     st.stop()
@@ -1316,11 +1317,11 @@ def _dcu_logo_uri(fname="dcu_logo.png"):
 
 @st.cache_data(show_spinner=False)
 def _plot_uri(relpath):
-    """Return a PNG from powerbi_export/visualizations/<relpath> as a base64 data URI
+    """Return a PNG from analysis_output/visualizations/<relpath> as a base64 data URI
     (empty string if missing). Lets us embed the real analysis plots inline."""
     import base64
     for _b in [os.path.dirname(os.path.abspath(__file__)), "."]:
-        _p = os.path.join(_b, "powerbi_export", "visualizations", *relpath.split("/"))
+        _p = os.path.join(_b, "analysis_output", "visualizations", *relpath.split("/"))
         if os.path.isfile(_p):
             with open(_p, "rb") as _f:
                 return "data:image/png;base64," + base64.b64encode(_f.read()).decode()
@@ -1331,8 +1332,8 @@ def render_nav():
     import streamlit.components.v1 as components
     page = st.session_state.page
     _logo = _dcu_logo_uri()
-    _logo_img = (f'<img src="{_logo}" alt="Dublin City University — Home">'
-                 if _logo else '<span style="font-size:1.6rem;">🧬</span>')
+    _logo_img = (f'<img src="{_logo}" alt="Dublin City University - Home">'
+                 if _logo else '<span style="font-size:.85rem;font-weight:800;color:#1A3C66;letter-spacing:.03em;">DCU</span>')
 
     # Nav links are native anchors → fully responsive, no st.columns.
     # Landing page: links to the landing sections (in-page #id scroll).
@@ -1356,7 +1357,7 @@ def render_nav():
         f'<a class="navlink" href="#{_sid}">{_lbl}</a>' for _lbl, _sid in _links)
 
     # Right-side action: Risk Tool on the landing page, ← Home on the tool page
-    # (same gold pill — size/shape/colour identical).
+    # (same gold pill - size/shape/colour identical).
     if page == "tool":
         _action = ('<a class="risk-btn" href="?" target="_self" title="Back to home">← Home</a>')
     else:
@@ -1397,7 +1398,7 @@ def render_nav():
     }
     if(n>32) clearInterval(iv);
   },150);
-  // Click delegation for in-page nav links — always scrolls (even on repeat
+  // Click delegation for in-page nav links - always scrolls (even on repeat
   // clicks of the same link) and avoids the native-jump quirk. Bound once.
   if(!win._navClickBound){ win._navClickBound = 1;
     doc.addEventListener('click', function(e){
@@ -1459,6 +1460,22 @@ def render_contact():
         '<a href="https://www.linkedin.com/in/martin-crane-a985a1a/" target="_blank" '
         'style="color:#93C5FD;font-size:.8rem;text-decoration:none;">LinkedIn Profile</a>'
         '</div></div>'
+        # Card 2b: Co-Supervisor
+        '<div style="background:rgba(255,255,255,.11);border:1px solid rgba(255,255,255,.22);'
+        'border-radius:18px;padding:26px 28px;min-width:230px;flex:1;max-width:290px;text-align:left;">'
+        '<div style="font-weight:800;font-size:1.05rem;color:#fff;margin-bottom:3px;">Dr Tai Tan Mai</div>'
+        '<div style="font-size:.8rem;color:#BFDBFE;margin-bottom:2px;">Co-Supervisor · Assistant Professor</div>'
+        '<div style="font-size:.8rem;color:#BFDBFE;margin-bottom:14px;">School of Computing, Dublin City University</div>'
+        '<div style="display:flex;flex-direction:column;gap:7px;">'
+        '<a href="mailto:tai.tanmai@dcu.ie" '
+        'style="color:#93C5FD;font-size:.8rem;text-decoration:none;">tai.tanmai@dcu.ie</a>'
+        '<a href="https://www.dcu.ie/computing/people/tai-tan-mai" target="_blank" '
+        'style="color:#93C5FD;font-size:.8rem;text-decoration:none;">DCU Faculty Page</a>'
+        '<a href="https://www.linkedin.com/in/taitanmai/" target="_blank" '
+        'style="color:#93C5FD;font-size:.8rem;text-decoration:none;">LinkedIn Profile</a>'
+        '<a href="https://scholar.google.com/citations?user=UDh0sOUAAAAJ&hl=en" target="_blank" '
+        'style="color:#93C5FD;font-size:.8rem;text-decoration:none;">Google Scholar</a>'
+        '</div></div>'
         # Card 3: Institution
         '<div style="background:rgba(255,255,255,.11);border:1px solid rgba(255,255,255,.22);'
         'border-radius:18px;padding:26px 28px;min-width:230px;flex:1;max-width:290px;text-align:left;">'
@@ -1476,7 +1493,7 @@ def render_contact():
 
 
 def render_contact_footer():
-    """Combined Contact + Footer block — used on every page."""
+    """Combined Contact + Footer block - used on every page."""
     render_contact()
     render_footer()
 
@@ -1489,23 +1506,23 @@ def render_footer():
     st.markdown(f"""
     <div class="footer">
         <div class="fd">
-            ⚠️ Disclaimer: Research prototype at Dublin City University (DCU F-REC Notification-Only
+            Disclaimer: Research prototype at Dublin City University (DCU F-REC Notification-Only
             ethics approval). The model predicts COVID-19 <strong>in-hospital mortality as a proxy</strong>
-            for severe outcomes — the source dataset contains no Long-COVID / PASC follow-up labels.
+            for severe outcomes - the source dataset contains no Long-COVID / PASC follow-up labels.
             User testing with dummy data only. Not validated for clinical use, not a certified medical
-            device, and not a substitute for professional judgement — always consult a qualified clinician.
+            device, and not a substitute for professional judgement - always consult a qualified clinician.
         </div>
         <div class="fg2">
             <div>
                 {_flogo_html}
                 <div class="fb">Long COVID Risk Assessment</div>
                 <div class="ft2">COVID-19 mortality-proxy model with calibrated ML and SHAP
-                explainability. DCU MSc research prototype — educational use only.</div>
+                explainability. DCU MSc research prototype - educational use only.</div>
             </div>
             <div>
                 <div class="fch">Research</div>
                 <span class="fi">MSc Data Analytics - DCU</span>
-                <span class="fi">Supervisor: Dr Martin Crane</span>
+                <span class="fi">Supervisors: Dr Martin Crane &amp; Dr Tai Tan Mai</span>
                 <span class="fi">Durga Prasad Narsing</span>
                 <span class="fi">ID: A00050350</span>
             </div>
@@ -1587,7 +1604,7 @@ def page_landing():
             <div style="background:rgba(255,255,255,.10);border-left:3px solid #FFA700;
                 border-radius:8px;padding:10px 14px;margin:14px 0;font-size:.74rem;
                 color:rgba(255,255,255,.82);line-height:1.55;">
-                ⚠️ Disclaimer: Research prototype at Dublin City University. Not validated for
+                Disclaimer: Research prototype at Dublin City University. Not validated for
                 clinical use, not a medical device, and does not constitute medical advice.
                 Medications must only be prescribed by qualified clinicians.
             </div>
@@ -1609,16 +1626,16 @@ def page_landing():
     </div>
     """, unsafe_allow_html=True)
 
-    # (Start Assessment removed from the landing page — use the navbar "🧬 Risk Tool".)
+    # (Start Assessment removed from the landing page - use the navbar "🧬 Risk Tool".)
 
-    # Stat bar — AUC from computed model metrics
+    # Stat bar - AUC from computed model metrics
     _stat_auc_pct = f"{mdl_metrics['ens']['auc']*100:.0f}%"
     st.markdown(f"""
     <div class="stat-bar">
         <div class="stc"><div class="n countup">566K+</div><div class="l">Training Patients</div></div>
         <div class="stc"><div class="n countup">{_stat_auc_pct}</div><div class="l">Model AUC Score</div></div>
         <div class="stc"><div class="n countup">5 Models</div><div class="l">Benchmarked (LR best)</div></div>
-        <div class="stc"><div class="n countup">&lt;1%</div><div class="l">Gender Parity (AUC)</div></div>
+        <div class="stc"><div class="n countup">~2.8%</div><div class="l">Gender AUC Gap (within 5% threshold)</div></div>
     </div>
     """, unsafe_allow_html=True)
 
@@ -1669,7 +1686,7 @@ def page_landing():
 </script>
 """, height=0)
 
-    # ── Data at a glance (EDA) — real figures from the analysis ───────────────
+    # ── Data at a glance (EDA) - real figures from the analysis ───────────────
     def _fig_grid(items):
         """items: list of (relpath, caption). Returns an HTML flex grid of figures."""
         _h = ""
@@ -1688,11 +1705,11 @@ def page_landing():
 
     _eda = _fig_grid([
         ("eda_plots/01_age_distribution.png",   "<strong>Age distribution</strong> of the confirmed-case cohort."),
-        ("eda_plots/05_mortality_by_age.png",   "<strong>Mortality by age</strong> — risk rises sharply with age."),
+        ("eda_plots/05_mortality_by_age.png",   "<strong>Mortality by age</strong> - risk rises sharply with age."),
         ("eda_plots/03_condition_prevalence.png","<strong>Comorbidity prevalence</strong> across the cohort."),
     ])
     if _eda:
-        with st.expander("Data at a glance — exploratory analysis"):
+        with st.expander("Data at a glance - exploratory analysis"):
             st.markdown(_eda, unsafe_allow_html=True)
 
     # Model Performance Section
@@ -1703,12 +1720,12 @@ def page_landing():
         f'<p>Deployed model: calibrated, tuned Logistic Regression on '
         f'{mdl_metrics["n_train"]:,} confirmed COVID-19 cases, validated on '
         f'{mdl_metrics["n_test"]:,} held-out records (stratified 80/20). LR/RF/GB/XGBoost/'
-        f'Stacking benchmarked — no model significantly beats LR (DeLong), so the '
+        f'Stacking benchmarked - no model significantly beats LR (DeLong), so the '
         f'interpretable LR is deployed.</p>'
         '</div>',
         unsafe_allow_html=True)
 
-    # AUC cards — values computed from stratified hold-out test set
+    # AUC cards - values computed from stratified hold-out test set
     col1, col2, col3, col4 = st.columns(4)
     models_data = [
         (col1, "Logistic Regression", f"{mdl_metrics['lr']['auc']:.3f}", "#1D4ED8", "#DBEAFE", mdl_metrics['lr']['auc']*100),
@@ -1737,7 +1754,7 @@ def page_landing():
                     f'<div style="width:{pct}%;height:100%;background:linear-gradient(90deg,{clr},{clr}88);border-radius:5px;"></div></div></div>',
                     unsafe_allow_html=True)
 
-    # Metric cards — values computed from stratified 80/20 hold-out test set
+    # Metric cards - values computed from stratified 80/20 hold-out test set
     st.markdown("<br>", unsafe_allow_html=True)
     mc1,mc2,mc3,mc4,mc5,mc6 = st.columns(6)
     # Operating point at F1-optimal threshold 0.26 (covid_threshold_optimization.csv)
@@ -1758,7 +1775,7 @@ def page_landing():
                 f'</div>',
                 unsafe_allow_html=True)
 
-    # Validation note — deployed model: calibration + temporal validation
+    # Validation note - deployed model: calibration + temporal validation
     _ens_auc_str  = f"{mdl_metrics['ens']['auc']:.4f}"
     _ci_lo        = f"{mdl_metrics['ens']['ci_lower']:.3f}"
     _ci_hi        = f"{mdl_metrics['ens']['ci_upper']:.3f}"
@@ -1780,7 +1797,7 @@ def page_landing():
         unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
-    # ── Evidence plots — the real figures from covid_analysis_full.py ─────────
+    # ── Evidence plots - the real figures from covid_analysis_full.py ─────────
     _roc_uri = _plot_uri("model_comparison_plots/02_roc_curves.png")
     _cal_uri = _plot_uri("calibration_plots/02_reliability_diagram.png")
     if _roc_uri or _cal_uri:
@@ -1792,7 +1809,7 @@ def page_landing():
                 'box-shadow:0 3px 14px rgba(13,27,62,.08);">'
                 f'<img src="{_roc_uri}" alt="ROC curves" style="width:100%;height:auto;border-radius:8px;">'
                 '<figcaption style="font-size:.76rem;color:#4B5563;margin-top:8px;text-align:center;">'
-                '<strong style="color:#0D1B3E;">ROC curves</strong> — all benchmarked models on the hold-out set.</figcaption>'
+                '<strong style="color:#0D1B3E;">ROC curves</strong> - all benchmarked models on the hold-out set.</figcaption>'
                 '</figure>')
         if _cal_uri:
             _imgs += (
@@ -1801,44 +1818,44 @@ def page_landing():
                 'box-shadow:0 3px 14px rgba(13,27,62,.08);">'
                 f'<img src="{_cal_uri}" alt="Reliability diagram" style="width:100%;height:auto;border-radius:8px;">'
                 '<figcaption style="font-size:.76rem;color:#4B5563;margin-top:8px;text-align:center;">'
-                '<strong style="color:#0D1B3E;">Reliability diagram</strong> — predicted vs. observed after isotonic calibration.</figcaption>'
+                '<strong style="color:#0D1B3E;">Reliability diagram</strong> - predicted vs. observed after isotonic calibration.</figcaption>'
                 '</figure>')
         st.markdown(
             '<div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:16px;">'
             + _imgs + '</div>', unsafe_allow_html=True)
 
-    # ── Model Card (collapsible) — the single most defensible artefact ────────
-    with st.expander("Model Card — full technical summary"):
+    # ── Model Card (collapsible) - the single most defensible artefact ────────
+    with st.expander("Model Card - full technical summary"):
         st.markdown(f"""
-**Model name:** Long COVID Risk Assessment — COVID-19 mortality-proxy model
+**Model name:** Long COVID Risk Assessment - COVID-19 mortality-proxy model
 **Owner:** Durga Prasad Narsing · MSc Data Analytics, Dublin City University (2026)
 
 | Field | Detail |
 |---|---|
-| **Intended use** | Research/education prototype for risk *stratification* — **not** a medical device, **not** for clinical decisions. |
+| **Intended use** | Research/education prototype for risk *stratification* - **not** a medical device, **not** for clinical decisions. |
 | **Target** | In-hospital mortality (used as a *proxy* for severe outcome / Long COVID risk). |
 | **Data** | 566,602 real records → {mdl_metrics['n_total']:,} confirmed COVID-19 cases (Mexican open COVID dataset). |
-| **Split** | Stratified 80/20 — {mdl_metrics['n_train']:,} train / {mdl_metrics['n_test']:,} test. |
+| **Split** | Stratified 80/20 - {mdl_metrics['n_train']:,} train / {mdl_metrics['n_test']:,} test. |
 | **Algorithm** | Tuned **Logistic Regression**, isotonic-**calibrated** (selected over RF, GB, XGBoost & Stacking; no model significantly beats LR by DeLong). |
 | **Pipeline** | median imputation → standard scaling → calibrated LR. |
 | **Features (9)** | Age, Sex, Diabetes, Hypertension, Cardiovascular, Pneumonia, Obesity, Asthma, COPD. |
 | **Discrimination** | AUC **{mdl_metrics['ens']['auc']:.4f}** (95% CI {mdl_metrics['ens']['ci_lower']:.3f}–{mdl_metrics['ens']['ci_upper']:.3f}); temporal AUC {mdl_metrics['temporal_auc']:.3f}. |
 | **Operating point** | Threshold **{mdl_metrics['threshold']:.2f}** (F1-optimal): sensitivity {mdl_metrics['ens']['recall']:.1f}%, specificity {mdl_metrics['ens']['specificity']:.1f}%, precision {mdl_metrics['ens']['precision']:.1f}%, F1 {mdl_metrics['ens']['f1']:.1f}%. |
 | **Calibration** | Brier {mdl_metrics['ens']['brier']:.3f}, ECE {mdl_metrics['ens']['ece']:.4f} (count-weighted). |
-| **Fairness** | Audited across age, sex, comorbidity — gender parity <1% AUC gap; older subgroups flagged for monitoring. |
+| **Fairness** | Audited across age, sex, comorbidity - gender AUC gap ~2.8% (within 5% threshold); older subgroups (50–65, 65+) and diabetes subgroup flagged for monitoring. |
 | **Ethics** | DCU F-REC compliant; fully de-identified open data. |
 
 **Known limitations**
-- Mortality is a **proxy**, not a direct Long COVID diagnosis — interpret accordingly.
+- Mortality is a **proxy**, not a direct Long COVID diagnosis - interpret accordingly.
 - Single-country dataset; external/geographic generalisation is unverified.
-- **Low precision at the chosen threshold** (≈{mdl_metrics['ens']['precision']:.0f}%) — suitable for *screening/triage*, not confirmation.
+- **Low precision at the chosen threshold** (≈{mdl_metrics['ens']['precision']:.0f}%) - suitable for *screening/triage*, not confirmation.
 - Long COVID sequelae scores are clinically-informed **heuristics**, not direct model outputs.
 """)
 
     st.markdown("<hr class='div' style='margin:28px 0 20px;'>", unsafe_allow_html=True)
 
-    # Feature Importance Section — LR-based SHAP values from covid_analysis_full.py
-    # (powerbi_export/analysis/covid_shap_values.csv). Top 6 shown.
+    # Feature Importance Section - LR-based SHAP values from covid_analysis_full.py
+    # (analysis_output/analysis/covid_shap_values.csv). Top 6 shown.
     _shap_vals = load_shap_values()[:6]
     fi_colors = ["#DC2626","#D97706","#7C3AED","#1D4ED8","#059669","#0891B2"]
     fi_bg     = ["#FEE2E2","#FEF3C7","#EDE9FE","#DBEAFE","#D1FAE5","#CFFAFE"]
@@ -1846,7 +1863,7 @@ def page_landing():
     fi_bars_html = ""
     for (_lbl, _pct), clr, bg in zip(_shap_vals, fi_colors, fi_bg):
         bar_w = min(round(_pct * 2, 0), 100)
-        # No indentation — indented HTML inside st.markdown triggers CommonMark code blocks
+        # No indentation - indented HTML inside st.markdown triggers CommonMark code blocks
         fi_bars_html += (
             f'<div style="margin-bottom:8px;">'
             f'<div style="display:flex;justify-content:space-between;margin-bottom:3px;font-size:.81rem;font-weight:700;">'
@@ -1862,7 +1879,7 @@ def page_landing():
     top2_names = _shap_vals[0][0], _shap_vals[1][0]
     top2_pct   = round(_shap_vals[0][1] + _shap_vals[1][1], 1)
 
-    # SHAP section — ONE HTML block (flex 2-col) so the content lives INSIDE the
+    # SHAP section - ONE HTML block (flex 2-col) so the content lives INSIDE the
     # card (no empty white box) and the #section-shap anchor lands on the heading.
     _shap_html = (
         '<div id="section-shap" style="background:#fff;border-radius:18px;padding:24px 28px;'
@@ -1870,7 +1887,7 @@ def page_landing():
         '<div style="display:flex;gap:34px;flex-wrap:wrap;align-items:flex-start;">'
         # ── LEFT: Tree-SHAP bars ──
         '<div style="flex:1;min-width:300px;">'
-        '<div style="font-size:.71rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#2E5C92;margin-bottom:5px;">Tree SHAP (XGBoost) — Feature Importance</div>'
+        '<div style="font-size:.71rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#2E5C92;margin-bottom:5px;">Tree SHAP (XGBoost) - Feature Importance</div>'
         '<div style="font-size:1.35rem;font-weight:800;color:#0D1B3E;margin-bottom:4px;">What Drives <span style="color:#2E5C92;">Predictions?</span></div>'
         '<div style="font-size:.83rem;color:#374151;margin-bottom:14px;line-height:1.6;">Tree SHAP values (from the XGBoost benchmark model) show which clinical features most impact mortality risk. <em style="color:#6B7280;font-size:.76rem;">(Global mean |SHAP|, normalised to 100%)</em></div>'
         f'{fi_bars_html}'
@@ -1880,16 +1897,16 @@ def page_landing():
         '<div style="font-size:.71rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#2E5C92;margin-bottom:5px;">Clinical Interpretation</div>'
         '<div style="font-size:1.35rem;font-weight:800;color:#0D1B3E;margin-bottom:14px;">Why <span style="color:#2E5C92;">Explainability</span> Matters</div>'
         '<div style="background:#FFF5F5;border-radius:9px;padding:13px 15px;border-left:4px solid #DC2626;margin-bottom:10px;">'
-        f'<div style="font-weight:700;font-size:.84rem;color:#991B1B;margin-bottom:3px;">{top2_names[0]} — Strongest Predictor</div>'
-        '<div style="font-size:.78rem;color:#374151;line-height:1.55;">Highest single-feature impact on mortality — consistent with clinical literature on COVID severity.</div></div>'
+        f'<div style="font-weight:700;font-size:.84rem;color:#991B1B;margin-bottom:3px;">{top2_names[0]} - Strongest Predictor</div>'
+        '<div style="font-size:.78rem;color:#374151;line-height:1.55;">Highest single-feature impact on mortality - consistent with clinical literature on COVID severity.</div></div>'
         '<div style="background:#FFFBEB;border-radius:9px;padding:13px 15px;border-left:4px solid #D97706;margin-bottom:10px;">'
-        f'<div style="font-weight:700;font-size:.84rem;color:#92400E;margin-bottom:3px;">{top2_names[1]} — Second Strongest</div>'
-        '<div style="font-size:.78rem;color:#374151;line-height:1.55;">Older age is a leading driver of severe-outcome risk — consistent with the COVID-19 mortality literature.</div></div>'
+        f'<div style="font-weight:700;font-size:.84rem;color:#92400E;margin-bottom:3px;">{top2_names[1]} - Second Strongest</div>'
+        '<div style="font-size:.78rem;color:#374151;line-height:1.55;">Older age is a leading driver of severe-outcome risk - consistent with the COVID-19 mortality literature.</div></div>'
         '<div style="background:#EFF6FF;border-radius:9px;padding:13px 15px;border-left:4px solid #1D4ED8;margin-bottom:10px;">'
         '<div style="font-weight:700;font-size:.84rem;color:#1E40AF;margin-bottom:3px;">Transparency Builds Clinical Trust</div>'
-        '<div style="font-size:.78rem;color:#374151;line-height:1.55;">Every prediction is explainable — clinicians see exactly which factors drove the risk score for each individual patient.</div></div>'
+        '<div style="font-size:.78rem;color:#374151;line-height:1.55;">Every prediction is explainable - clinicians see exactly which factors drove the risk score for each individual patient.</div></div>'
         '<div style="background:linear-gradient(135deg,#1A3C66,#2E5C92);border-radius:9px;padding:11px 15px;">'
-        f'<div style="font-size:.79rem;color:rgba(255,255,255,.9);line-height:1.6;">Key insight: {top2_names[0]} + {top2_names[1]} account for <strong style="color:#93C5FD;">{top2_pct}%</strong> of the prediction — the primary clinical intervention targets.</div></div>'
+        f'<div style="font-size:.79rem;color:rgba(255,255,255,.9);line-height:1.6;">Key insight: {top2_names[0]} + {top2_names[1]} account for <strong style="color:#93C5FD;">{top2_pct}%</strong> of the prediction - the primary clinical intervention targets.</div></div>'
         '</div>'   # end right
         '</div>'   # end flex
         '</div>'   # end card
@@ -1903,7 +1920,7 @@ def page_landing():
             '<figure style="margin:0 0 26px;background:#fff;border:1px solid #BFDBFE;'
             'border-radius:18px;padding:18px 22px;box-shadow:0 4px 20px rgba(26,60,102,.09);">'
             '<figcaption style="font-size:.71rem;font-weight:700;text-transform:uppercase;'
-            'letter-spacing:.08em;color:#2E5C92;margin-bottom:10px;">SHAP summary — generated figure</figcaption>'
+            'letter-spacing:.08em;color:#2E5C92;margin-bottom:10px;">SHAP summary - generated figure</figcaption>'
             f'<img src="{_shap_uri}" alt="SHAP feature importance" '
             'style="width:100%;max-width:760px;height:auto;display:block;margin:0 auto;border-radius:8px;">'
             '</figure>', unsafe_allow_html=True)
@@ -1939,7 +1956,7 @@ def page_landing():
     <div class="fg">
         <div class="fc"><div class="fc-icon">🤖🧬</div>
             <div class="fc-title">Calibrated ML Prediction</div>
-            <div class="fc-text">Calibrated, tuned Logistic Regression — selected over RF, GB,
+            <div class="fc-text">Calibrated, tuned Logistic Regression - selected over RF, GB,
             XGBoost &amp; Stacking by DeLong test. 0.89 AUC on 44,000+ held-out records.</div>
         </div>
         <div class="fc"><div class="fc-icon">🔍📊</div>
@@ -1950,12 +1967,11 @@ def page_landing():
         <div class="fc"><div class="fc-icon">🫁❤️🧠🔋⚗️</div>
             <div class="fc-title">5 Long COVID Sequelae</div>
             <div class="fc-text">Respiratory, Cardiac, Neurological (brain fog),
-            Systemic (fatigue) and Metabolic — each assessed independently.</div>
+            Systemic (fatigue) and Metabolic - each assessed independently.</div>
         </div>
         <div class="fc"><div class="fc-icon">⚖️🩺</div>
             <div class="fc-title">Fairness Audited</div>
-            <div class="fc-text">Tested across age, sex &amp; comorbidity. Gender parity
-            strong (&lt;1% AUC gap); older groups (50–65, 65+) flagged for monitoring.</div>
+            <div class="fc-text">Tested across age, sex &amp; comorbidity. Gender AUC gap ~2.8% (within the 5% threshold); older groups (50–65, 65+) and diabetes subgroup flagged for monitoring.</div>
         </div>
         <div class="fc"><div class="fc-icon">📅🏥</div>
             <div class="fc-title">Personalised Care Timeline</div>
@@ -1965,7 +1981,7 @@ def page_landing():
         <div class="fc"><div class="fc-icon">💊💰</div>
             <div class="fc-title">Cost-Benefit (Illustrative)</div>
             <div class="fc-text">Hypothetical scenario only: earlier triage of high-risk patients
-            could yield substantial savings — figures depend on assumed intervention costs and are
+            could yield substantial savings - figures depend on assumed intervention costs and are
             not empirically validated.</div>
         </div>
     </div>
@@ -2022,11 +2038,11 @@ def page_landing():
             <div class="ep"><span class="epc">✓</span>Approved under DCU F-REC Notification Only ethics review</div>
             <div class="ep"><span class="epc">✓</span>All interactions use dummy patient data - no personal data stored</div>
             <div class="ep"><span class="epc">✓</span>AI system does not replace clinical judgment or decision-making</div>
-            <div class="ep"><span class="epc">✓</span>Target is in-hospital mortality used as a proxy — no Long-COVID/PASC labels exist in the dataset</div>
+            <div class="ep"><span class="epc">✓</span>Target is in-hospital mortality used as a proxy - no Long-COVID/PASC labels exist in the dataset</div>
             <div class="ep"><span class="epc">✓</span>Fairness audited across age, sex &amp; comorbidity; age-group disparities transparently flagged</div>
             <div class="ep"><span class="epc">✓</span>Trained on anonymised Mexican Government COVID-19 Dataset</div>
             <div class="ep"><span class="epc">✓</span>GDPR compliant - zero personally identifiable information</div>
-            <div class="ep"><span class="epc">✓</span>Supervised by Dr Martin Crane, School of Computing, DCU</div>
+            <div class="ep"><span class="epc">✓</span>Supervised by Dr Martin Crane &amp; Dr Tai Tan Mai, School of Computing, DCU</div>
             <div class="ep"><span class="epc">✓</span>For research and user testing only - not clinical deployment</div>
         </div>
         <div class="disc">Disclaimer: Research prototype at Dublin City University. Not validated for
@@ -2037,15 +2053,15 @@ def page_landing():
 
     # ── Fairness audit plots (real figures) ──────────────────────────────────
     _fair = _fig_grid([
-        ("fairness_plots/03_fairness_gender.png", "<strong>Fairness by sex</strong> — AUC parity within &lt;1%."),
-        ("fairness_plots/01_fairness_age.png",    "<strong>Fairness by age group</strong> — 50+ flagged for monitoring."),
+        ("fairness_plots/03_fairness_gender.png", "<strong>Fairness by sex</strong> - AUC gap ~2.8% (within the 5% threshold)."),
+        ("fairness_plots/01_fairness_age.png",    "<strong>Fairness by age group</strong> - 50+ flagged for monitoring."),
     ])
     if _fair:
-        with st.expander("Fairness audit — subgroup performance"):
+        with st.expander("Fairness audit - subgroup performance"):
             st.markdown(_fair, unsafe_allow_html=True)
 
     # ── References & evidence base ───────────────────────────────────────────
-    # Curated subset of the project's 27-paper bibliography — each entry maps to a
+    # Curated subset of the project's 27-paper bibliography - each entry maps to a
     # method/feature visible in this app. Full list is in the written report.
     with st.expander("References & evidence base"):
         st.markdown(
@@ -2057,35 +2073,35 @@ def page_landing():
             '<li><strong>Guzman-Esquivel, J. et al. (2023).</strong> Acute-phase predictors of '
             'Long COVID. <em>Healthcare</em>, 11(2):197. '
             '<a href="https://doi.org/10.3390/healthcare11020197" target="_blank" rel="noopener">doi.org/10.3390/healthcare11020197</a> '
-            '— feature selection (acute-phase risk factors).</li>'
+            '- feature selection (acute-phase risk factors).</li>'
             '<li><strong>DeLong, E.R. et al. (1988).</strong> Comparing areas under correlated ROC '
             'curves. <em>Biometrics</em>, 44(3):837–845. '
             '<a href="https://doi.org/10.2307/2531595" target="_blank" rel="noopener">doi.org/10.2307/2531595</a> '
-            '— model comparison (LR vs RF/GB/XGBoost).</li>'
+            '- model comparison (LR vs RF/GB/XGBoost).</li>'
             '<li><strong>Guo, C. et al. (2017).</strong> On calibration of modern neural networks. '
             '<em>ICML</em>. '
             '<a href="https://proceedings.mlr.press/v70/guo17a.html" target="_blank" rel="noopener">proceedings.mlr.press/v70/guo17a.html</a> '
-            '— Expected Calibration Error (ECE) metric.</li>'
+            '- Expected Calibration Error (ECE) metric.</li>'
             '<li><strong>Niculescu-Mizil, A. &amp; Caruana, R. (2005).</strong> Predicting good '
             'probabilities with supervised learning. <em>ICML</em>. '
             '<a href="https://doi.org/10.1145/1102351.1102430" target="_blank" rel="noopener">doi.org/10.1145/1102351.1102430</a> '
-            '— probability calibration (isotonic).</li>'
+            '- probability calibration (isotonic).</li>'
             '<li><strong>Lundberg, S.M. &amp; Lee, S.-I. (2017).</strong> A unified approach to '
             'interpreting model predictions (SHAP). <em>NeurIPS</em>. '
             '<a href="https://arxiv.org/abs/1705.07874" target="_blank" rel="noopener">arxiv.org/abs/1705.07874</a> '
-            '— SHAP global + per-patient explanations.</li>'
+            '- SHAP global + per-patient explanations.</li>'
             '<li><strong>Lundberg, S.M. et al. (2020).</strong> Local explanations to global '
             'understanding with trees. <em>Nature Machine Intelligence</em>, 2:56–67. '
             '<a href="https://doi.org/10.1038/s42256-019-0138-9" target="_blank" rel="noopener">doi.org/10.1038/s42256-019-0138-9</a> '
-            '— Tree SHAP (XGBoost) importance.</li>'
+            '- Tree SHAP (XGBoost) importance.</li>'
             '<li><strong>Hardt, M. et al. (2016).</strong> Equality of opportunity in supervised '
             'learning. <em>NeurIPS</em>. '
             '<a href="https://arxiv.org/abs/1610.02413" target="_blank" rel="noopener">arxiv.org/abs/1610.02413</a> '
-            '— fairness audit &amp; mitigation.</li>'
+            '- fairness audit &amp; mitigation.</li>'
             '<li><strong>Mitchell, M. et al. (2019).</strong> Model cards for model reporting. '
             '<em>FAT*</em>. '
             '<a href="https://doi.org/10.1145/3287560.3287596" target="_blank" rel="noopener">doi.org/10.1145/3287560.3287596</a> '
-            '— the Model Card above.</li>'
+            '- the Model Card above.</li>'
             '</ol>'
             '<div style="font-size:.76rem;color:#6B7280;margin-top:12px;border-top:1px solid #EFF2F7;'
             'padding-top:8px;line-height:1.55;">Dataset: Mexican Government open COVID-19 dataset '
@@ -2100,7 +2116,7 @@ def page_landing():
 # TOOL PAGE  (sidebar + results)
 # ─────────────────────────────────────────────────────────────────────────────
 def page_tool():
-    # Hide sidebar completely — inputs are now inline
+    # Hide sidebar completely - inputs are now inline
     st.markdown("""
     <style>
     section[data-testid="stSidebar"],
@@ -2166,18 +2182,18 @@ def page_tool():
         '</div>',
         unsafe_allow_html=True)
 
-    # ── Stat bar (matches landing page — same CSS class) ──────────────────────
+    # ── Stat bar (matches landing page - same CSS class) ──────────────────────
     _tool_auc_pct = f"{mdl_metrics['ens']['auc']*100:.0f}%"
     st.markdown(f"""
 <div class="stat-bar">
 <div class="stc"><div class="n">566K+</div><div class="l">Training Patients</div></div>
 <div class="stc"><div class="n">{_tool_auc_pct}</div><div class="l">Model AUC Score</div></div>
 <div class="stc"><div class="n">5 Models</div><div class="l">Benchmarked (LR best)</div></div>
-<div class="stc"><div class="n">&lt;1%</div><div class="l">Gender Parity (AUC)</div></div>
+<div class="stc"><div class="n">~2.8%</div><div class="l">Gender AUC Gap (within 5% threshold)</div></div>
 </div>
 """, unsafe_allow_html=True)
 
-    # ── SAMPLE PATIENTS — ONE clean, complete table ──────────────────────────
+    # ── SAMPLE PATIENTS - ONE clean, complete table ──────────────────────────
     # Columns: Risk Level | Threshold | Sample Score | Load
     # .sp-patient-section anchors the CSS (gap removal + uniform Load button style).
     _SP_DATA = [
@@ -2197,10 +2213,10 @@ def page_tool():
             '<div class="sp-patient-section" '
             'style="font-size:.78rem;font-weight:800;color:#1A3C66;'
             'text-transform:uppercase;letter-spacing:.07em;margin:4px 0 6px 0;">'
-            '🧪 Sample Patients '
+            'Sample Patients '
             '<span style="font-size:.64rem;font-weight:500;color:#6B7280;'
             'text-transform:none;letter-spacing:0;">'
-            '— real training-data examples · click ▶ Load to autofill the form</span></div>',
+            '- real training-data examples · click ▶ Load to autofill the form</span></div>',
             unsafe_allow_html=True)
 
         # Header row
@@ -2332,7 +2348,7 @@ def page_tool():
         st.markdown(
             '<div style="background:#FEF3C7;border-radius:8px;padding:6px 10px;'
             'font-size:.68rem;color:#78350F;border-left:3px solid #F59E0B;margin-top:8px;">'
-            '⚠️ Research prototype only — not for clinical use.</div>',
+            'Note: Research prototype only - not for clinical use.</div>',
             unsafe_allow_html=True)
 
     with fd:
@@ -2400,14 +2416,14 @@ def page_tool():
             '</div><span class="live-badge">Result</span></div>',
             unsafe_allow_html=True)
 
-        # Save-as-PDF button — clones ONLY the results region into a clean print
+        # Save-as-PDF button - clones ONLY the results region into a clean print
         # window (so the overview/sample/form at the top of the tool are excluded).
         import streamlit.components.v1 as _components
         _components.html("""
 <button id="pdfbtn" style="cursor:pointer;background:#FFA700;color:#1A3C66;border:none;
   border-radius:50px;padding:9px 20px;font-size:.82rem;font-weight:800;
   box-shadow:0 3px 10px rgba(255,167,0,.4);font-family:Arial,sans-serif;">
-  🖨️ Save results as PDF</button>
+  Save as PDF</button>
 <script>
 (function(){
   var btn = document.getElementById('pdfbtn');
@@ -2427,7 +2443,7 @@ def page_tool():
     var styles = '';
     pdoc.querySelectorAll('style, link[rel="stylesheet"]').forEach(function(el){ styles += el.outerHTML; });
     var w = window.open('', '_blank');
-    w.document.write('<html><head><title>Long COVID Risk Assessment — Result</title>'
+    w.document.write('<html><head><title>Long COVID Risk Assessment - Result</title>'
       + styles
       + '<style>body{background:#fff;padding:24px;margin:0;}'
       + '.dcu-navbar,.stButton,button,iframe,[data-testid="stToolbar"],[data-testid="stHeader"]{display:none!important;}'
@@ -2449,12 +2465,12 @@ def page_tool():
             'a calibrated, population-level estimate of <em>severe-outcome (mortality-proxy)</em> risk '
             'for screening and triage support.</div>'
             '<div style="flex:1;min-width:240px;color:#374151;"><strong style="color:#0D1B3E;">What this isn\'t:</strong> '
-            'a Long COVID diagnosis, an individual certainty, or a substitute for clinical judgement — '
+            'a Long COVID diagnosis, an individual certainty, or a substitute for clinical judgement - '
             'a 30% score means ~30 of 100 similar patients experienced the outcome.</div>'
             '</div>',
             unsafe_allow_html=True)
 
-        # ── Patient Profile (entered inputs) — clean summary so the PDF/record
+        # ── Patient Profile (entered inputs) - clean summary so the PDF/record
         #    shows exactly what was submitted to the form ─────────────────────
         _profile_fields = [
             ("Age",            f"{pt['age']} yrs"),
@@ -2480,7 +2496,7 @@ def page_tool():
         st.markdown(
             '<div class="card" style="margin-bottom:14px;">'
             '<div style="font-size:.72rem;font-weight:800;color:#2E5C92;text-transform:uppercase;'
-            'letter-spacing:.06em;margin-bottom:10px;">Patient Profile — entered inputs</div>'
+            'letter-spacing:.06em;margin-bottom:10px;">Patient Profile - entered inputs</div>'
             f'<div style="display:flex;gap:10px;flex-wrap:wrap;">{_cells}</div></div>',
             unsafe_allow_html=True)
 
@@ -2489,12 +2505,12 @@ def page_tool():
         _thr_pct = mdl_metrics["threshold"] * 100          # 0.26 → 26
         _flag_hi = score >= _thr_pct
         if _flag_hi:
-            _fbg, _fbd, _ftx, _fic, _fmsg = ("#FEF2F2", "#DC2626", "#7F1D1D", "⚠️",
-                "<strong>HIGH RISK</strong> — at or above the F1-optimal screening "
+            _fbg, _fbd, _ftx, _fic, _fmsg = ("#FEF2F2", "#DC2626", "#7F1D1D", "(!)",
+                "<strong>HIGH RISK</strong> - at or above the F1-optimal screening "
                 f"threshold ({_thr_pct:.0f}/100). Recommend early clinical review.")
         else:
-            _fbg, _fbd, _ftx, _fic, _fmsg = ("#ECFDF5", "#059669", "#065F46", "✅",
-                "<strong>Lower risk</strong> — below the F1-optimal screening "
+            _fbg, _fbd, _ftx, _fic, _fmsg = ("#ECFDF5", "#059669", "#065F46", "(✓)",
+                "<strong>Lower risk</strong> - below the F1-optimal screening "
                 f"threshold ({_thr_pct:.0f}/100). Routine pathway as scheduled.")
         st.markdown(
             f'<div style="background:{_fbg};border:1px solid {_fbd};border-left:5px solid {_fbd};'
@@ -2509,12 +2525,12 @@ def page_tool():
             f'<div style="font-size:.74rem;color:#6B7280;margin:-4px 0 14px;line-height:1.55;'
             f'border-left:3px solid #4AC9E3;padding:4px 0 4px 12px;">'
             f'<strong style="color:#1A3C66;">Calibrated risk</strong> '
-            f'(Brier {mdl_metrics["ens"]["brier"]:.3f}, ECE {mdl_metrics["ens"]["ece"]:.4f}) — '
+            f'(Brier {mdl_metrics["ens"]["brier"]:.3f}, ECE {mdl_metrics["ens"]["ece"]:.4f}) - '
             f'a {score:.0f}% estimate corresponds to roughly {score:.0f} severe outcomes per 100 '
             f'similar patients, not an arbitrary index.</div>',
             unsafe_allow_html=True)
 
-        # ROW 1 — Score ring + Key metrics
+        # ROW 1 - Score ring + Key metrics
         cr, ck = st.columns([1, 2], gap="large")
         with cr:
             st.markdown(f"""
@@ -2609,7 +2625,7 @@ def page_tool():
             '<div class="card" style="margin-top:6px;">'
             '<div class="card-title" style="margin-bottom:4px;">Why this score? '
             '<span style="font-size:.68rem;color:#6B7280;font-weight:500;text-transform:none;'
-            'letter-spacing:0;">(This patient\'s top factors — local log-odds attribution)</span></div>'
+            'letter-spacing:0;">(This patient\'s top factors - local log-odds attribution)</span></div>'
             '<div style="display:flex;gap:26px;flex-wrap:wrap;margin-top:10px;">'
             '<div style="flex:1;min-width:240px;">'
             '<div style="font-size:.74rem;font-weight:800;color:#991B1B;margin-bottom:8px;">'
@@ -2620,7 +2636,7 @@ def page_tool():
             '</div>'
             '<div style="font-size:.71rem;color:#6B7280;margin-top:10px;border-top:1px solid #EFF2F7;'
             'padding-top:8px;line-height:1.5;">Contribution = ln(odds ratio per +1 SD) × this patient\'s '
-            'standardised value. An interpretable approximation of the model\'s logit — directionally '
+            'standardised value. An interpretable approximation of the model\'s logit - directionally '
             'faithful, not a full Kernel/Tree-SHAP run.</div>'
             '</div>',
             unsafe_allow_html=True)
@@ -2632,7 +2648,7 @@ def page_tool():
             _names = {"pneumonia":"Pneumonia","age":"Age","sex":"Sex (Female)","diabetes":"Diabetes",
                       "copd":"COPD","obesity":"Obesity","hypertension":"Hypertension",
                       "cardiovascular":"Cardiovascular","asthma":"Asthma"}
-            with st.expander("Nomogram — transparent manual score (illustrative, not the official prediction)"):
+            with st.expander("Nomogram - transparent manual score (illustrative, not the official prediction)"):
                 _chips = ""
                 for _f, _p in sorted(_nbd, key=lambda x: -abs(x[1])):
                     _pc = "#DC2626" if _p > 0 else "#059669"
@@ -2643,7 +2659,7 @@ def page_tool():
                 st.markdown(
                     '<div style="font-size:.82rem;color:#374151;line-height:1.6;margin-bottom:12px;">'
                     'A classic points-based <strong>nomogram</strong> built from the logistic-regression '
-                    'coefficients — it shows <em>how</em> a risk estimate is assembled by hand. '
+                    'coefficients - it shows <em>how</em> a risk estimate is assembled by hand. '
                     'The app\'s <strong>official</strong> risk is always the calibrated-model number above; '
                     'this manual score is for transparency only and may differ slightly.</div>'
                     '<div style="display:flex;gap:14px;flex-wrap:wrap;margin-bottom:12px;">'
@@ -2666,7 +2682,7 @@ def page_tool():
                     unsafe_allow_html=True)
                 # full points chart so clinicians can see the scoring rule.
                 # Rendered as an HTML table (not st.dataframe) so it is captured
-                # by the Save-as-PDF clone — the dataframe grid is a canvas that
+                # by the Save-as-PDF clone - the dataframe grid is a canvas that
                 # does not clone into the print window.
                 _nomo_tbl, _ = load_nomogram()
                 if _nomo_tbl is not None:
@@ -2697,14 +2713,14 @@ def page_tool():
 
         st.markdown("<hr class='div'>", unsafe_allow_html=True)
 
-        # ROW 2 — Sequelae + Risk factor impact
+        # ROW 2 - Sequelae + Risk factor impact
         cl, cf = st.columns([3, 2], gap="large")
         with cl:
             st.markdown(
                 '<div class="card-title">Long COVID Sequelae Risk Assessment '
                 '<span style="font-size:.68rem;color:#6B7280;font-weight:500;'
                 'text-transform:none;letter-spacing:0;">'
-                '(Heuristic estimates — not direct model outputs)</span></div>',
+                '(Heuristic estimates - not direct model outputs)</span></div>',
                 unsafe_allow_html=True)
             for cat, pct in lc.items():
                 m   = LC_META[cat]; a = bclr(pct)
@@ -2759,7 +2775,7 @@ def page_tool():
 
         st.markdown("<hr class='div'>", unsafe_allow_html=True)
 
-        # ROW 3+4 merged — LEFT: Timeline + Clinical Guidance | RIGHT: Referrals + Red Flags + Model
+        # ROW 3+4 merged - LEFT: Timeline + Clinical Guidance | RIGHT: Referrals + Red Flags + Model
         cleft, cright = st.columns([3, 2], gap="large")
 
         with cleft:
@@ -2781,7 +2797,7 @@ def page_tool():
                 f'</div>',
                 unsafe_allow_html=True)
 
-            # Evidence-Based Clinical Guidance (below timeline — balances right column height)
+            # Evidence-Based Clinical Guidance (below timeline - balances right column height)
             st.markdown('<div class="card-title" style="margin-top:14px;">Evidence-Based Clinical Guidance</div>',
                         unsafe_allow_html=True)
             st.markdown(
@@ -2850,11 +2866,11 @@ def page_tool():
                 '<strong style="color:#0D1B3E;">Model:</strong> Calibrated tuned Logistic Regression (9 features)<br>'
                 f'<strong style="color:#0D1B3E;">Training:</strong> {mdl_metrics["n_train"]:,} confirmed COVID cases<br>'
                 f'<strong style="color:#0D1B3E;">AUC:</strong> {mdl_metrics["ens"]["auc"]:.3f} · Brier: {mdl_metrics["ens"]["brier"]:.3f} · ECE: {mdl_metrics["ens"]["ece"]:.4f}<br>'
-                '<strong style="color:#0D1B3E;">Fairness:</strong> Gender &lt;1%; age 50+ flagged<br>'
-                '<strong style="color:#0D1B3E;">Supervisor:</strong> Dr Martin Crane, DCU<br><br>'
+                '<strong style="color:#0D1B3E;">Fairness:</strong> Gender gap ~2.8% (within threshold); age 50+, diabetes subgroup flagged<br>'
+                '<strong style="color:#0D1B3E;">Supervisors:</strong> Dr Martin Crane &amp; Dr Tai Tan Mai, DCU<br><br>'
                 '<div style="background:#FEF3C7;border-radius:7px;padding:9px 12px;'
                 'font-size:.76rem;color:#78350F;border-left:3px solid #F59E0B;font-weight:600;">'
-                '⚠️ Research prototype only. Not for clinical use.</div>'
+                'Note: Research prototype only. Not for clinical use.</div>'
                 '</div>',
                 unsafe_allow_html=True)
 
@@ -2865,7 +2881,7 @@ def page_tool():
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-# ROUTER — URL-driven (?page=tool) so the HTML nav links work on any device
+# ROUTER - URL-driven (?page=tool) so the HTML nav links work on any device
 # ─────────────────────────────────────────────────────────────────────────────
 _qp_page = st.query_params.get("page", "")
 st.session_state.page = "tool" if _qp_page == "tool" else "landing"

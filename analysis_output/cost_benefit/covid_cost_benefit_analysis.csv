@@ -1,0 +1,4 @@
+scenario,adoption_rate,patients_intervened,patients_prevented,total_savings,roi_percent,payback_years
+30% Adoption (Conservative),0.3,4258,1441,101817000,1626.9894534995206,0.30731606706149267
+60% Adoption (Moderate),0.6,8516,2883,205709000,1956.1525294788894,0.2556037898195995
+90% Adoption (Optimistic),0.9,12774,4324,309526000,2095.0724245295787,0.23865523413218923

@@ -1,0 +1,3 @@
+strategy,test_auc,n_train,synthetic_samples
+class_weight='balanced',0.8877,176174,0
+SMOTE oversampling,0.8878,308984,132810

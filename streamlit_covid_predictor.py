@@ -1755,7 +1755,7 @@ def page_landing():
                     unsafe_allow_html=True)
 
     # Metric cards - values computed from stratified 80/20 hold-out test set
-    st.markdown("<br>", unsafe_allow_html=True)
+    st.markdown('<div style="height:14px;"></div>', unsafe_allow_html=True)
     mc1,mc2,mc3,mc4,mc5,mc6 = st.columns(6)
     # Operating point at F1-optimal threshold 0.26 (covid_threshold_optimization.csv)
     metrics = [
@@ -1796,6 +1796,58 @@ def page_landing():
         f'</div>',
         unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
+
+    # ── Model benchmark comparison table ──────────────────────────────────────
+    # AUC values from covid_auc_confidence_intervals.csv; threshold metrics at
+    # F1-optimal cut-off (0.26) from covid_threshold_optimization.csv.
+    with st.expander("Model benchmark comparison — all 5 models"):
+        _bench = pd.DataFrame({
+            "Model": [
+                "Logistic Regression (deployed)",
+                "Gradient Boosting",
+                "XGBoost",
+                "Stacking Ensemble",
+                "Random Forest",
+            ],
+            "AUC": [
+                mdl_metrics["ens"]["auc"],
+                mdl_metrics["gb"]["auc"],
+                0.8879,
+                0.8876,
+                mdl_metrics["rf"]["auc"],
+            ],
+            "Sensitivity": [
+                round(mdl_metrics["ens"]["recall"] / 100, 3),
+                "—", "—", "—", "—",
+            ],
+            "Specificity": [
+                round(mdl_metrics["ens"]["specificity"] / 100, 3),
+                "—", "—", "—", "—",
+            ],
+            "Precision": [
+                round(mdl_metrics["ens"]["precision"] / 100, 3),
+                "—", "—", "—", "—",
+            ],
+            "F1": [
+                round(mdl_metrics["ens"]["f1"] / 100, 3),
+                "—", "—", "—", "—",
+            ],
+            "Brier": [
+                mdl_metrics["ens"]["brier"],
+                "—", "—", "—", "—",
+            ],
+            "Deployed": ["Yes", "No", "No", "No", "No"],
+        })
+        st.dataframe(
+            _bench,
+            use_container_width=True,
+            hide_index=True,
+        )
+        st.caption(
+            "AUC: stratified 80/20 hold-out. Sensitivity/Specificity/Precision/F1 at "
+            "F1-optimal threshold 0.26 (deployed model only). Brier after isotonic calibration. "
+            "DeLong test: no model significantly outperforms LR — interpretable LR deployed."
+        )
 
     # ── Evidence plots - the real figures from covid_analysis_full.py ─────────
     _roc_uri = _plot_uri("model_comparison_plots/02_roc_curves.png")
@@ -2193,6 +2245,46 @@ def page_tool():
 </div>
 """, unsafe_allow_html=True)
 
+    # ── Batch prediction — upload CSV, download results ──────────────────────
+    with st.expander("Batch prediction — upload a CSV of multiple patients"):
+        st.markdown(
+            '<div style="font-size:.8rem;color:#374151;margin-bottom:10px;">'
+            'Upload a CSV with columns: <code>age, sex, diabetes, hypertension, '
+            'cardiovascular, pneumonia, obesity, asthma, copd</code>. '
+            'Sex: 1 = Female, 0 = Male. Conditions: 1 = Yes, 0 = No.'
+            '</div>',
+            unsafe_allow_html=True)
+        _batch_file = st.file_uploader("Choose CSV file", type="csv", key="batch_upload",
+                                        label_visibility="collapsed")
+        if _batch_file is not None:
+            try:
+                _REQUIRED = ["age","sex","diabetes","hypertension","cardiovascular",
+                             "pneumonia","obesity","asthma","copd"]
+                _bdf = pd.read_csv(_batch_file)
+                _missing = [c for c in _REQUIRED if c not in _bdf.columns]
+                if _missing:
+                    st.error(f"Missing columns: {', '.join(_missing)}")
+                else:
+                    _bdf = _bdf.copy()
+                    _scores = []
+                    for _, _row in _bdf.iterrows():
+                        _pt = {c: _row[c] for c in _REQUIRED}
+                        _scores.append(round(predict_risk(imp_m, sc_m, model_m, _pt), 1))
+                    _bdf["risk_score"] = _scores
+                    _bdf["risk_band"] = _bdf["risk_score"].apply(rlevel)
+                    st.dataframe(_bdf[_REQUIRED + ["risk_score", "risk_band"]],
+                                 use_container_width=True, hide_index=True)
+                    _csv_out = _bdf.to_csv(index=False).encode("utf-8")
+                    st.download_button(
+                        label=f"Download results ({len(_bdf)} patients)",
+                        data=_csv_out,
+                        file_name="longcovid_risk_results.csv",
+                        mime="text/csv",
+                        key="batch_download",
+                    )
+            except Exception as _e:
+                st.error(f"Could not process file: {_e}")
+
     # ── SAMPLE PATIENTS - ONE clean, complete table ──────────────────────────
     # Columns: Risk Level | Threshold | Sample Score | Load
     # .sp-patient-section anchors the CSS (gap removal + uniform Load button style).
@@ -2413,7 +2505,7 @@ def page_tool():
             '<div><h2>Patient Risk Assessment Results</h2>'
             '<p>Calibrated logistic-regression prediction · synthetic inputs · '
             'DCU F-REC research-compliant</p>'
-            '</div><span class="live-badge">Result</span></div>',
+            f'</div><span class="live-badge">Assessed · {datetime.now().strftime("%H:%M")}</span></div>',
             unsafe_allow_html=True)
 
         # Save-as-PDF button - clones ONLY the results region into a clean print
@@ -2578,7 +2670,7 @@ def page_tool():
                         f'<div class="mv" style="color:{acc};">{val}</div></div>',
                         unsafe_allow_html=True)
 
-            st.markdown("<br>", unsafe_allow_html=True)
+            st.markdown('<div style="height:14px;"></div>', unsafe_allow_html=True)
             cmap = {"diabetes":"Diabetes","hypertension":"Hypertension",
                     "cardiovascular":"Cardiovascular","obesity":"Obesity",
                     "asthma":"Asthma","copd":"COPD","pneumonia":"Pneumonia"}
@@ -2629,10 +2721,10 @@ def page_tool():
             '<div style="display:flex;gap:26px;flex-wrap:wrap;margin-top:10px;">'
             '<div style="flex:1;min-width:240px;">'
             '<div style="font-size:.74rem;font-weight:800;color:#991B1B;margin-bottom:8px;">'
-            'Pushing risk up</div>' + _factor_rows(_raises, True) + '</div>'
+            'Risk-increasing factors</div>' + _factor_rows(_raises, True) + '</div>'
             '<div style="flex:1;min-width:240px;">'
             '<div style="font-size:.74rem;font-weight:800;color:#065F46;margin-bottom:8px;">'
-            'Pulling risk down</div>' + _factor_rows(_lowers, False) + '</div>'
+            'Risk-decreasing factors</div>' + _factor_rows(_lowers, False) + '</div>'
             '</div>'
             '<div style="font-size:.71rem;color:#6B7280;margin-top:10px;border-top:1px solid #EFF2F7;'
             'padding-top:8px;line-height:1.5;">Contribution = ln(odds ratio per +1 SD) × this patient\'s '

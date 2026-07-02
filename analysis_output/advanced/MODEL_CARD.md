@@ -1,8 +1,8 @@
 # Model Card - COVID-19 Mortality Risk Model
 
 **Author:** Durga Prasad Narsing (A00050350) - MSc Computing (Data Analytics), DCU
-**Supervisor:** Martin Crane
-**Date generated:** 2026-06-12
+**Supervisors:** Dr Martin Crane; Dr Tai Tan Mai (Assistant Professor, School of Computing, DCU)
+**Date generated:** 2026-07-02
 
 ## Model details
 - **Algorithm:** Primary deployed model: calibrated, tuned Logistic Regression (LR/RF/GB/XGBoost/Stacking benchmarked alongside) on standardised, median-imputed acute-phase features.

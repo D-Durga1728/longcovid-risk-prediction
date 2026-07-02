@@ -1,0 +1,6 @@
+Model,AUC,Threshold,Sensitivity,Specificity,Precision,F1,Brier,ECE,Deployed
+Logistic Regression (deployed),0.8877,0.29,0.662,0.892,0.463,0.545,0.0778,0.0026,Yes
+Random Forest,0.8707,0.26,0.673,0.876,0.432,0.526,0.0808,0.0055,No
+Gradient Boosting,0.8881,0.25,0.716,0.873,0.441,0.546,0.0777,0.0041,No
+XGBoost,0.8879,0.29,0.656,0.895,0.466,0.545,0.0778,0.0036,No
+Stacking Ensemble,0.8875,0.29,0.677,0.887,0.457,0.546,0.0778,0.0027,No

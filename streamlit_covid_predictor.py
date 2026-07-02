@@ -1798,8 +1798,11 @@ def page_landing():
     st.markdown('</div>', unsafe_allow_html=True)
 
     # ── Model benchmark comparison table ──────────────────────────────────────
-    # AUC values from covid_auc_confidence_intervals.csv; threshold metrics at
-    # F1-optimal cut-off (0.26) from covid_threshold_optimization.csv.
+    # Every model is re-trained on the same split and isotonic-calibrated identically,
+    # then evaluated at its OWN F1-optimal threshold (analysis_output/advanced/
+    # covid_model_benchmark_full.csv). Deployed-LR operating point is the production
+    # value from the main pipeline (covid_threshold_optimization.csv, cv=5 calibration);
+    # AUCs are the canonical single-model values (covid_auc_confidence_intervals.csv).
     with st.expander("Model benchmark comparison — all 5 models"):
         _bench = pd.DataFrame({
             "Model": [
@@ -1809,34 +1812,14 @@ def page_landing():
                 "Stacking Ensemble",
                 "Random Forest",
             ],
-            "AUC": [
-                mdl_metrics["ens"]["auc"],
-                mdl_metrics["gb"]["auc"],
-                0.8879,
-                0.8876,
-                mdl_metrics["rf"]["auc"],
-            ],
-            "Sensitivity": [
-                round(mdl_metrics["ens"]["recall"] / 100, 3),
-                "—", "—", "—", "—",
-            ],
-            "Specificity": [
-                round(mdl_metrics["ens"]["specificity"] / 100, 3),
-                "—", "—", "—", "—",
-            ],
-            "Precision": [
-                round(mdl_metrics["ens"]["precision"] / 100, 3),
-                "—", "—", "—", "—",
-            ],
-            "F1": [
-                round(mdl_metrics["ens"]["f1"] / 100, 3),
-                "—", "—", "—", "—",
-            ],
-            "Brier": [
-                mdl_metrics["ens"]["brier"],
-                "—", "—", "—", "—",
-            ],
-            "Deployed": ["Yes", "No", "No", "No", "No"],
+            "AUC":         [mdl_metrics["ens"]["auc"], mdl_metrics["gb"]["auc"], 0.8879, 0.8876, mdl_metrics["rf"]["auc"]],
+            "Sensitivity": [round(mdl_metrics["ens"]["recall"] / 100, 3), 0.716, 0.656, 0.677, 0.673],
+            "Specificity": [round(mdl_metrics["ens"]["specificity"] / 100, 3), 0.873, 0.895, 0.887, 0.876],
+            "Precision":   [round(mdl_metrics["ens"]["precision"] / 100, 3), 0.441, 0.466, 0.457, 0.432],
+            "F1":          [round(mdl_metrics["ens"]["f1"] / 100, 3), 0.546, 0.545, 0.546, 0.526],
+            "Brier":       [mdl_metrics["ens"]["brier"], 0.078, 0.078, 0.078, 0.081],
+            "ECE":         [mdl_metrics["ens"]["ece"], 0.004, 0.004, 0.003, 0.006],
+            "Deployed":    ["Yes", "No", "No", "No", "No"],
         })
         st.dataframe(
             _bench,
@@ -1844,9 +1827,10 @@ def page_landing():
             hide_index=True,
         )
         st.caption(
-            "AUC: stratified 80/20 hold-out. Sensitivity/Specificity/Precision/F1 at "
-            "F1-optimal threshold 0.26 (deployed model only). Brier after isotonic calibration. "
-            "DeLong test: no model significantly outperforms LR — interpretable LR deployed."
+            "Every model re-trained on the same stratified 80/20 split and isotonic-calibrated "
+            "identically, then evaluated at its own F1-optimal threshold. All five are "
+            "well-calibrated (ECE < 0.01). DeLong test: no model significantly outperforms the "
+            "Logistic Regression, so the interpretable, calibrated LR is deployed."
         )
 
     # ── Evidence plots - the real figures from covid_analysis_full.py ─────────

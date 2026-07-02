@@ -2,7 +2,8 @@
 
 *Format: Gebru et al. (2021), "Datasheets for Datasets".*
 **Compiled by:** Durga Prasad Narsing (A00050350), MSc Computing (Data Analytics), DCU
-**Date:** 2026-06-12
+**Supervisors:** Dr Martin Crane; Dr Tai Tan Mai (Assistant Professor, School of Computing, DCU)
+**Date:** 2026-07-02
 
 ## Motivation
 - **Purpose:** Epidemiological surveillance of COVID-19 cases reported by the Mexican

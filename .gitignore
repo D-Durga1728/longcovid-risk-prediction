@@ -44,6 +44,22 @@ advanced_methods.py
 test_analysis.py
 requirements-analysis.txt
 
+# ── Raw dataset — too large and sourced from Kaggle, not for public repo ────
+covid.csv
+
+# ── Report build scripts and draft docs — internal only ─────────────────────
+build_ieee_report.py
+fix_report.py
+make_diagrams.py
+benchmark_full.py
+*.docx
+
+# ── Internal research/planning docs ─────────────────────────────────────────
+REFERENCES_TABLE.md
+RELATED_WORK_COMPARISON.md
+RESEARCH_AND_REPORT_PACKAGE.md
+RESEARCH_FRAMING.md
+
 # ── OS noise ────────────────────────────────────────────────────────────────
 .DS_Store
 Thumbs.db

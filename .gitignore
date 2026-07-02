@@ -39,7 +39,6 @@ POWERBI_BUILD_GUIDE.md
 POWERBI_DASHBOARD_SPEC.md
 
 # ── Offline analysis pipeline — not needed by the deployed app ───────────────
-covid_analysis_full.py
 advanced_methods.py
 test_analysis.py
 requirements-analysis.txt

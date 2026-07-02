@@ -1,87 +1,115 @@
-# Predictive Modelling for Personalized Long COVID Risk Assessment
+# Predictive Modelling for Personalised Long COVID Risk Assessment and Prevention
 
-MSc Computing (Data Analytics) practicum, Dublin City University.
+**MSc Computing (Data Analytics) — Dublin City University**
 
-**Student:** Durga Prasad Narsing (A00050350)
-**Supervisors:** Dr Martin Crane; Dr Tai Tan Mai (Assistant Professor, School of Computing, DCU)
+| | |
+|---|---|
+| **Student** | Durga Prasad Narsing (A00050350) |
+| **Supervisors** | Dr Martin Crane · Dr Tai Tan Mai |
+| **School** | School of Computing, Dublin City University |
 
 ---
 
-## What this project is
-An end-to-end, responsible-ML pipeline that predicts **COVID-19 in-hospital mortality from
-acute-phase clinical data**, used as a **proxy for severe outcome**. It benchmarks an
-interpretable model against complex alternatives and adds calibration, fairness, explainability
-and decision-analysis on top.
+## Overview
 
-> **Important caveat.** The dataset (Mexican Government COVID-19, Kaggle) has acute-phase data
-> and in-hospital mortality, but **no Long COVID / PASC follow-up labels**. Mortality is therefore
-> a proxy for severe outcome; sequela-specific Long COVID prediction is future work. This is a
-> research/education prototype, not a validated clinical device.
+This project builds an end-to-end, responsible-ML pipeline that predicts **COVID-19 in-hospital mortality from nine admission-time clinical features**, used as a clinically justified proxy for severe Long COVID outcome risk. Five model families are benchmarked, the winner is selected by formal statistical testing (DeLong), its probabilities are calibrated, and the full system — including fairness audit and multi-layer explanations — is exposed through a Streamlit web prototype.
 
-## Headline results
-- Deployed model: **calibrated, tuned Logistic Regression** (C=0.01).
-- Test AUC **0.888** (95% CI 0.884-0.892); temporal out-of-time AUC **0.891**.
-- Well-calibrated after isotonic calibration: Brier 0.078, ECE 0.002 (count-weighted).
-- DeLong test: no model (RF, GB, XGBoost, Stacking) significantly beats LR, so the interpretable
-  model is deployed.
-- Fairness audited across age, sex and comorbidity (discrimination + calibration), with
-  group-specific threshold mitigation (TPR disparity 0.60 to 0.045).
-- Trained on 220,218 confirmed cases; 9 acute-phase features; mortality rate 12.31%.
+> **Disclaimer.** The dataset (Mexican Government COVID-19 surveillance, Kaggle) contains acute-phase clinical data with in-hospital mortality labels but no PASC / Long COVID follow-up labels. Mortality is therefore a proxy for severe outcome. This is a research and education prototype — not a validated clinical device.
 
-## Repository structure
+---
+
+## Key Results
+
+| Metric | Value |
+|---|---|
+| Dataset | 220,218 confirmed COVID-19 cases |
+| Features | 9 admission-time (age, sex, 7 comorbidities) |
+| Mortality rate | 12.31% (1:7 class imbalance) |
+| Deployed model | Calibrated Logistic Regression (C=0.01, isotonic) |
+| Test AUC | **0.888** (95% CI 0.884–0.892) |
+| Temporal AUC | 0.891 (out-of-time validation) |
+| Brier Score | 0.078 (post-calibration) |
+| ECE (count-weighted) | 0.002 (post-calibration) |
+| DeLong test | No ensemble significantly beats LR (p > 0.05) |
+| TPR disparity | 0.603 → **0.045** (group-specific threshold mitigation) |
+| Top risk drivers | Pneumonia 44.2% SHAP · Age 33.0% SHAP |
+
+---
+
+## Repository Structure
+
 ```
-covid_analysis_full.py        Main 13-phase analysis pipeline
-advanced_methods.py           Advanced methods (DeLong, calibration, fairness, SHAP, nomogram, ...)
-test_analysis.py              Unit tests (pytest)
-streamlit_covid_predictor.py  Streamlit risk-calculator web app
-covid.csv                     Dataset (Mexican Government COVID-19, Kaggle)
-requirements-analysis.txt     Dependencies for the analysis pipeline
-requirements.txt              Lean dependencies for the deployed app
-analysis_output/              Generated results: CSVs, plots, models, MODEL_CARD.md, DATASHEET.md
-RESEARCH_AND_REPORT_PACKAGE.md   Consolidated research + report handoff
-RESEARCH_FRAMING.md           Research questions, methodology justification, critical analysis
-RELATED_WORK_COMPARISON.md    Prior-work comparison (what they did, limits, how this advances)
-REPORT_HANDOFF.md             Methodology + results + numbers for the report
-REFERENCES_TABLE.md           The 27 references with links and where each is used
+longcovid-risk-prediction/
+│
+├── streamlit_covid_predictor.py   Streamlit clinical web prototype (2,967 lines)
+├── covid_analysis_full.py         Main 13-phase responsible-ML analysis pipeline
+├── requirements.txt               App dependencies (Streamlit Cloud)
+│
+├── analysis_output/
+│   ├── models/
+│   │   ├── model_primary_deployed.joblib   Calibrated Logistic Regression
+│   │   ├── imputer.joblib                  Median imputer (fit on train only)
+│   │   └── scaler.joblib                   StandardScaler (fit on train only)
+│   ├── advanced/                   CSVs: AUC CIs, calibration, DeLong, SHAP,
+│   │                               fairness, nomogram, thresholds, model card
+│   ├── fairness_calibration/       Fairness audit + calibration analysis CSVs
+│   ├── visualizations/             35+ PNGs (EDA, ROC, calibration, SHAP, fairness)
+│   └── ...                         Clinical explanations, feature analysis, cost-benefit
+│
+├── assets/
+│   ├── dcu_logo.png
+│   └── dcu_logo_white.png
+│
+└── .streamlit/config.toml         Streamlit theme config
 ```
 
-## How to run
+---
 
-### Analysis pipeline
-```bash
-pip install -r requirements-analysis.txt
-python covid_analysis_full.py --data covid.csv
-```
-Runs all phases and writes results to `analysis_output/`. Runtime is a few minutes.
+## Pipeline Phases (`covid_analysis_full.py`)
 
-### Unit tests
-```bash
-python -m pytest test_analysis.py -v
-```
+| Phase | Description |
+|---|---|
+| 1 | Exploratory Data Analysis — 8 visualisations |
+| 2 | Preprocessing — sentinel decoding, leakage-free imputation |
+| 3 | Statistical Feature Validation — t-test, chi-square, Benjamini-Hochberg FDR |
+| 4 | Model Training — LR, RF, GB, Stacking; cost-sensitive; GridSearchCV |
+| 5 | SHAP Analysis — 5 visualisations, global + per-patient |
+| 6 | Fairness Audit — 8 subgroups, AUC + ECE, threshold mitigation |
+| 7 | Calibration — isotonic correction, Brier, ECE |
+| 8 | Cost-Benefit Analysis |
+| 9 | Clinical Explanations — nomogram, odds ratios |
+| 10 | Feature Interactions — SHAP interaction values |
+| 11 | Sensitivity Analysis — counterfactual what-if |
+| 12 | Export — all CSVs, joblib models, MODEL_CARD, DATASHEET |
+| 13 | Advanced Methods — XGBoost, Stacking, DeLong, DCA, temporal validation |
 
-### Streamlit app
+---
+
+## Running the App Locally
+
 ```bash
 pip install -r requirements.txt
-python -m streamlit run streamlit_covid_predictor.py
+streamlit run streamlit_covid_predictor.py
 ```
-The app loads the persisted model + scaler + imputer from `analysis_output/models/`.
 
-## Methods (summary)
-Leakage-controlled preprocessing (sentinel decoding, median imputation, train-only fit),
-cost-sensitive learning for class imbalance (SMOTE evaluated and rejected), hyperparameter
-tuning, AUC with bootstrap confidence intervals and DeLong tests, isotonic calibration,
-threshold optimisation, decision-curve analysis, SHAP (global + per-patient), Odds Ratios with
-confidence intervals, a points-based nomogram, fairness auditing with mitigation, temporal
-validation, and responsible-AI documentation (Model Card and Datasheet).
+The app loads the three pre-fitted artefacts from `analysis_output/models/` and applies the identical `impute → scale → predict_proba` chain used during training.
+
+## Running the Analysis Pipeline
+
+The analysis requires `covid.csv` (Mexican Government COVID-19 dataset, available on [Kaggle](https://www.kaggle.com/datasets/riteshahlawat/covid19-mexico-patient-health-dataset)) — not included in this repo due to size.
+
+```bash
+pip install pandas numpy matplotlib seaborn scipy scikit-learn shap xgboost statsmodels joblib streamlit
+python covid_analysis_full.py --data covid.csv
+```
+
+---
 
 ## Responsible AI
-- `analysis_output/advanced/MODEL_CARD.md` (Mitchell et al. 2019)
-- `analysis_output/advanced/DATASHEET.md` (Gebru et al. 2021)
 
-## References
-27 references (11 clinical + 16 methodology). See `REFERENCES_TABLE.md` for the full Harvard list
-with links and where each is used in the project.
-
-## Disclaimer
-Research and educational prototype only. Predicts a mortality proxy, not a clinical diagnosis.
-Not a validated medical device and not for individual treatment decisions.
+- **Model Card** — `analysis_output/advanced/MODEL_CARD.md` (Mitchell et al. 2019)
+- **Datasheet for Datasets** — `analysis_output/advanced/DATASHEET.md` (Gebru et al. 2021)
+- Leakage-free design (split-then-fit pipelines)
+- Eight-subgroup fairness audit (age, sex, diabetes) with group-specific threshold mitigation
+- Four-location disclaimer in the Streamlit prototype
+- DCU F-REC ethics approved; public de-identified dataset; GDPR compliant

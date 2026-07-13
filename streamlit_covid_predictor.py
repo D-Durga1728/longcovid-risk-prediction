@@ -2979,9 +2979,17 @@ def page_tool():
 # ─────────────────────────────────────────────────────────────────────────────
 # ROUTER - URL-driven (?page=tool) so the HTML nav links work on any device
 # ─────────────────────────────────────────────────────────────────────────────
-_qp_page = st.query_params.get("page", "")
-st.session_state.page = "tool" if _qp_page == "tool" else "landing"
-if st.session_state.page == "tool":
-    page_tool()
-else:
-    page_landing()
+# Guarded so `streamlit run` executes the router (Streamlit runs the script as
+# __main__) while `import streamlit_covid_predictor` (e.g. in test_app.py) loads
+# the helper functions without rendering any page.
+def _run_router():
+    _qp_page = st.query_params.get("page", "")
+    st.session_state.page = "tool" if _qp_page == "tool" else "landing"
+    if st.session_state.page == "tool":
+        page_tool()
+    else:
+        page_landing()
+
+
+if __name__ == "__main__":
+    _run_router()

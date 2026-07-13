@@ -1254,31 +1254,26 @@ def nomogram_score(pt):
     return int(pts), round(risk, 1), breakdown
 
 
-@st.cache_data(show_spinner=False)
+@st.cache_resource(show_spinner=False)
 def find_sample_patients(_imp, _sc, _model):
     """
-    Automatically select real patients from the training dataset whose
-    ensemble risk score falls closest to each target band centre:
-      CRITICAL → 82%   HIGH → 60%   MEDIUM → 38%   LOW → 12%
-    Underscored model args tell st.cache_data to skip hashing them.
-    Cached for the lifetime of the session - runs only once.
+    Return representative sample patients for each risk band.
+    Profiles are derived from the training data using proper 0/1 encoding
+    (1=Yes/Female, 0=No/Male) and verified against the deployed model.
+    Hardcoded so the app runs without covid.csv on Streamlit Cloud.
     """
-    df  = load_dataset(DATA_PATH)
-    X   = df[FEAT_COLS]
-    Xs  = _sc.transform(_imp.transform(X))
-
-    # Vectorised calibrated probability from the deployed model
-    probs = _model.predict_proba(Xs)[:, 1] * 100
-
-    # Targets matched to the calibrated bands (rlevel: ≥70 crit, ≥50 high, ≥30 med)
-    targets = {"crit": 80, "high": 58, "med": 38, "low": 10}
-    samples, scores = {}, {}
-    for key, target in targets.items():
-        idx = int(np.argmin(np.abs(probs - target)))
-        row = df.iloc[idx]
-        samples[key] = {f: int(row[f]) for f in FEAT_COLS}
-        scores[key]  = float(probs[idx])
-    return samples, scores
+    _SAMPLES = {
+        "crit": {"age": 83, "sex": 0, "diabetes": 1, "hypertension": 1,
+                 "cardiovascular": 1, "pneumonia": 1, "obesity": 1, "asthma": 0, "copd": 1},
+        "high": {"age": 60, "sex": 0, "diabetes": 1, "hypertension": 1,
+                 "cardiovascular": 0, "pneumonia": 1, "obesity": 1, "asthma": 1, "copd": 1},
+        "med":  {"age": 82, "sex": 0, "diabetes": 0, "hypertension": 1,
+                 "cardiovascular": 1, "pneumonia": 0, "obesity": 1, "asthma": 1, "copd": 1},
+        "low":  {"age": 53, "sex": 0, "diabetes": 0, "hypertension": 0,
+                 "cardiovascular": 0, "pneumonia": 0, "obesity": 1, "asthma": 0, "copd": 1},
+    }
+    _scores = {k: predict_risk(_imp, _sc, _model, v) for k, v in _SAMPLES.items()}
+    return _SAMPLES, _scores
 
 
 # Load the models at startup; a missing artifact shows a friendly UI error
@@ -1289,7 +1284,7 @@ except Exception as _startup_err:
     st.error(
         f"**Model initialisation failed:** {_startup_err}\n\n"
         "Ensure `analysis_output/models/` (imputer/scaler/model_primary_deployed) "
-        "and `covid.csv` are accessible, then rerun the app."
+        "are present in the repository, then rerun the app."
     )
     st.stop()
 

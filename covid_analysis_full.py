@@ -39,7 +39,7 @@ USAGE:
 
 import os, sys, warnings, logging, argparse
 from pathlib import Path
-from typing import Tuple, Dict, Any
+from typing import Tuple, Dict, List, Any
 import pandas as pd
 import numpy as np
 import matplotlib
@@ -52,12 +52,10 @@ from sklearn.impute import SimpleImputer
 from sklearn.utils.class_weight import compute_sample_weight
 from sklearn.model_selection import train_test_split, cross_val_score, GridSearchCV
 from sklearn.linear_model import LogisticRegression
-from sklearn.ensemble import (RandomForestClassifier, GradientBoostingClassifier,
-                              StackingClassifier)
+from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
 from sklearn.pipeline import Pipeline
 from sklearn.metrics import (roc_auc_score, roc_curve, confusion_matrix,
-                            brier_score_loss, precision_recall_curve, accuracy_score,
-                            f1_score)
+                            brier_score_loss, precision_recall_curve, accuracy_score)
 from sklearn.calibration import calibration_curve, CalibratedClassifierCV
 import joblib
 import shap
@@ -325,7 +323,7 @@ def phase1_eda(df: pd.DataFrame) -> None:
             plt.figure(figsize=(8, 5))
             sex_labels = {1: 'Female', 2: 'Male'}
             colors = ['#FF69B4', '#4169E1']
-            bars = plt.bar(range(len(sex_counts)), sex_counts.values, color=colors, alpha=0.7, edgecolor='black', linewidth=2)
+            plt.bar(range(len(sex_counts)), sex_counts.values, color=colors, alpha=0.7, edgecolor='black', linewidth=2)
             plt.title('Sex Distribution - Patient Population', fontsize=12, fontweight='bold')
             plt.ylabel('Number of Patients')
             plt.xticks(range(len(sex_counts)), [sex_labels.get(x, f'Unknown-{x}') for x in sex_counts.index])
@@ -352,7 +350,7 @@ def phase1_eda(df: pd.DataFrame) -> None:
             sorted_conds = sorted(cond_prev.items(), key=lambda x: x[1], reverse=True)
             cond_names = [c[0] for c in sorted_conds]
             cond_values = [c[1] for c in sorted_conds]
-            bars = plt.barh(cond_names, cond_values, color='coral', alpha=0.7, edgecolor='black', linewidth=2)
+            plt.barh(cond_names, cond_values, color='coral', alpha=0.7, edgecolor='black', linewidth=2)
             plt.title('Condition Prevalence in Patient Population', fontsize=12, fontweight='bold')
             plt.xlabel('Percentage (%)')
             plt.grid(True, alpha=0.3, axis='x')
@@ -366,7 +364,6 @@ def phase1_eda(df: pd.DataFrame) -> None:
         if 'date_died' in df.columns:
             total = len(df)
             died = (df['date_died'] != '9999-99-99').sum()
-            survived = total - died
             mortality_pct = (died / total * 100) if total > 0 else 0
             logger.info(f"Mortality: {died:,} deaths out of {total:,} ({mortality_pct:.2f}%)")
             
@@ -565,7 +562,7 @@ def phase3_statistical_tests(df_confirmed: pd.DataFrame) -> Dict[str, Any]:
 
             if len(age_died) > 1 and len(age_survived) > 1:
                 t_stat, p_value = stats.ttest_ind(age_died, age_survived)
-                logger.info(f"T-Test Results:")
+                logger.info("T-Test Results:")
                 logger.info(f"  Age (died): {age_died.mean():.1f} ± {age_died.std():.1f} years")
                 logger.info(f"  Age (survived): {age_survived.mean():.1f} ± {age_survived.std():.1f} years")
                 logger.info(f"  T-statistic: {t_stat:.4f}")
@@ -673,7 +670,7 @@ def phase4_model_training(df_confirmed: pd.DataFrame) -> Dict[str, Any]:
         # Check class balance
         pos_count = (y == 1).sum()
         neg_count = (y == 0).sum()
-        logger.info(f"Class distribution:")
+        logger.info("Class distribution:")
         logger.info(f"  Positive (mortality=1): {pos_count:,} ({(y == 1).mean()*100:.2f}%)")
         logger.info(f"  Negative (mortality=0): {neg_count:,} ({(y == 0).mean()*100:.2f}%)")
 
@@ -705,7 +702,7 @@ def phase4_model_training(df_confirmed: pd.DataFrame) -> Dict[str, Any]:
         X_train = scaler.fit_transform(X_train_imp)   # fit on train only
         X_test = scaler.transform(X_test_imp)         # apply train stats to test
 
-        logger.info(f"Data split:")
+        logger.info("Data split:")
         logger.info(f"  Training: {len(X_train):,} samples")
         logger.info(f"  Testing: {len(X_test):,} samples")
 
@@ -824,7 +821,7 @@ def phase4_model_training(df_confirmed: pd.DataFrame) -> Dict[str, Any]:
         model_names = list(scores.keys())
         auc_scores = list(scores.values())
         colors = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728']
-        bars = plt.bar(model_names, auc_scores, color=colors, alpha=0.7, edgecolor='black', linewidth=2)
+        plt.bar(model_names, auc_scores, color=colors, alpha=0.7, edgecolor='black', linewidth=2)
         plt.title('Model Performance Comparison (AUC Scores)', fontsize=12, fontweight='bold')
         plt.ylabel('AUC Score')
         plt.ylim([0.75, 1.0])
@@ -870,7 +867,7 @@ def phase4_model_training(df_confirmed: pd.DataFrame) -> Dict[str, Any]:
         recall = cm[1,1] / (cm[1,1] + cm[1,0]) if (cm[1,1] + cm[1,0]) > 0 else 0
         f1 = 2 * (precision * recall) / (precision + recall) if (precision + recall) > 0 else 0
         
-        logger.info(f"Ensemble Metrics:")
+        logger.info("Ensemble Metrics:")
         logger.info(f"  Accuracy: {accuracy:.4f}")
         logger.info(f"  Precision: {precision:.4f}")
         logger.info(f"  Recall: {recall:.4f}")
@@ -880,7 +877,7 @@ def phase4_model_training(df_confirmed: pd.DataFrame) -> Dict[str, Any]:
         metrics = ['Accuracy', 'Precision', 'Recall', 'F1-Score']
         values = [accuracy, precision, recall, f1]
         colors_metrics = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728']
-        bars = plt.bar(metrics, values, color=colors_metrics, alpha=0.7, edgecolor='black', linewidth=2)
+        plt.bar(metrics, values, color=colors_metrics, alpha=0.7, edgecolor='black', linewidth=2)
         plt.title('Ensemble Model Performance Metrics', fontweight='bold')
         plt.ylabel('Score')
         plt.ylim([0, 1])
@@ -1402,7 +1399,7 @@ def phase7_calibration_analysis(y_test: np.ndarray, predictions: dict) -> pd.Dat
         brier = brier_score_loss(y_test, ensemble_pred)
         ece = np.mean(cal_df['calibration_error'])
         
-        logger.info(f"Calibration Metrics:")
+        logger.info("Calibration Metrics:")
         logger.info(f"  Brier Score: {brier:.4f} (lower is better, 0=perfect)")
         logger.info(f"  Expected Calibration Error: {ece:.4f}")
         logger.info(f"  Interpretation: Model predictions are {'well-calibrated' if ece < 0.1 else 'poorly calibrated'}")
@@ -1526,7 +1523,7 @@ def phase8_cost_benefit_analysis(df_confirmed: pd.DataFrame,
 
         flagged_population = int(total_patients * high_risk_rate)
 
-        logger.info(f"Parameters:")
+        logger.info("Parameters:")
         logger.info(f"  Total patients: {total_patients:,}")
         logger.info(f"  Risk threshold: {risk_threshold:.2f}")
         logger.info(f"  High-risk rate (model-flagged): {high_risk_rate*100:.1f}%")
@@ -1907,7 +1904,6 @@ def phase13_advanced_methods(model_results: Dict[str, Any],
     import advanced_methods as am
 
     vp = f"{CONFIG['output_folder']}/visualizations/advanced_plots"
-    ap = f"{CONFIG['output_folder']}/advanced"
     out: Dict[str, Any] = {}
 
     models = model_results['models']

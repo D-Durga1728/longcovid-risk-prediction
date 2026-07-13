@@ -41,6 +41,7 @@ POWERBI_DASHBOARD_SPEC.md
 # ── Offline analysis pipeline — not needed by the deployed app ───────────────
 advanced_methods.py
 test_analysis.py
+test_app.py
 requirements-analysis.txt
 
 # ── Raw dataset — too large and sourced from Kaggle, not for public repo ────

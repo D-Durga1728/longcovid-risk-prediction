@@ -1,7 +1,7 @@
 """
 Long COVID Risk Assessment System
 MSc Data Analytics Research Prototype - Dublin City University
-Author: Durga Prasad Narsing (A00050350) | Supervisors: Dr Martin Crane & Dr Tai Tan Mai
+Author: Durga Prasad Narsing (A00050350) | Supervisor: Dr Tai Tan Mai | Initial Supervisor: Dr Martin Crane
 """
 
 import streamlit as st
@@ -1455,7 +1455,7 @@ def render_contact():
         '<div style="background:rgba(255,255,255,.11);border:1px solid rgba(255,255,255,.22);'
         'border-radius:18px;padding:26px 28px;min-width:230px;flex:1;max-width:320px;text-align:left;">'
         '<div style="font-weight:800;font-size:1.05rem;color:#fff;margin-bottom:3px;">Dr Martin Crane</div>'
-        '<div style="font-size:.8rem;color:#FFA700;font-weight:700;margin-bottom:2px;">Research Supervisor</div>'
+        '<div style="font-size:.8rem;color:#FFA700;font-weight:700;margin-bottom:2px;">Initial Supervisor</div>'
         '<div style="font-size:.78rem;color:#BFDBFE;margin-bottom:2px;">Associate Professor</div>'
         '<div style="font-size:.78rem;color:#BFDBFE;margin-bottom:10px;">School of Computing, Dublin City University</div>'
         '<div style="font-size:.75rem;color:rgba(255,255,255,.7);margin-bottom:12px;line-height:1.55;">'
@@ -1476,7 +1476,7 @@ def render_contact():
         '<div style="background:rgba(255,255,255,.11);border:1px solid rgba(255,255,255,.22);'
         'border-radius:18px;padding:26px 28px;min-width:230px;flex:1;max-width:320px;text-align:left;">'
         '<div style="font-weight:800;font-size:1.05rem;color:#fff;margin-bottom:3px;">Dr Tai Tan Mai</div>'
-        '<div style="font-size:.8rem;color:#FFA700;font-weight:700;margin-bottom:2px;">Co-Supervisor</div>'
+        '<div style="font-size:.8rem;color:#FFA700;font-weight:700;margin-bottom:2px;">Supervisor</div>'
         '<div style="font-size:.78rem;color:#BFDBFE;margin-bottom:2px;">Assistant Professor</div>'
         '<div style="font-size:.78rem;color:#BFDBFE;margin-bottom:10px;">School of Computing, Dublin City University</div>'
         '<div style="font-size:.75rem;color:rgba(255,255,255,.7);margin-bottom:12px;line-height:1.55;">'
@@ -1547,7 +1547,7 @@ def render_footer():
             <div>
                 <div class="fch">Research</div>
                 <span class="fi">MSc Data Analytics - DCU</span>
-                <span class="fi">Supervisors: Dr Martin Crane &amp; Dr Tai Tan Mai</span>
+                <span class="fi">Supervisor: Dr Tai Tan Mai · Initial Supervisor: Dr Martin Crane</span>
                 <span class="fi">Durga Prasad Narsing</span>
                 <span class="fi">ID: A00050350</span>
             </div>
@@ -2103,7 +2103,7 @@ def page_landing():
             <div class="ep"><span class="epc">✓</span>Fairness audited across age, sex &amp; comorbidity; age-group disparities transparently flagged</div>
             <div class="ep"><span class="epc">✓</span>Trained on anonymised Mexican Government COVID-19 Dataset</div>
             <div class="ep"><span class="epc">✓</span>GDPR compliant - zero personally identifiable information</div>
-            <div class="ep"><span class="epc">✓</span>Supervised by Dr Martin Crane &amp; Dr Tai Tan Mai, School of Computing, DCU</div>
+            <div class="ep"><span class="epc">✓</span>Supervised by Dr Tai Tan Mai (initial supervisor: Dr Martin Crane), School of Computing, DCU</div>
             <div class="ep"><span class="epc">✓</span>For research and user testing only - not clinical deployment</div>
         </div>
         <div class="disc">Disclaimer: Research prototype at Dublin City University. Not validated for
@@ -2968,7 +2968,7 @@ def page_tool():
                 f'<strong style="color:#0D1B3E;">Training:</strong> {mdl_metrics["n_train"]:,} confirmed COVID cases<br>'
                 f'<strong style="color:#0D1B3E;">AUC:</strong> {mdl_metrics["ens"]["auc"]:.3f} · Brier: {mdl_metrics["ens"]["brier"]:.3f} · ECE: {mdl_metrics["ens"]["ece"]:.4f}<br>'
                 '<strong style="color:#0D1B3E;">Fairness:</strong> Gender gap ~2.8% (within threshold); age 50+, diabetes subgroup flagged<br>'
-                '<strong style="color:#0D1B3E;">Supervisors:</strong> Dr Martin Crane &amp; Dr Tai Tan Mai, DCU<br><br>'
+                '<strong style="color:#0D1B3E;">Supervisor:</strong> Dr Tai Tan Mai · Initial Supervisor: Dr Martin Crane, DCU School of Computing<br><br>'
                 '<div style="background:#FEF3C7;border-radius:7px;padding:9px 12px;'
                 'font-size:.76rem;color:#78350F;border-left:3px solid #F59E0B;font-weight:600;">'
                 'Note: Research prototype only. Not for clinical use.</div>'

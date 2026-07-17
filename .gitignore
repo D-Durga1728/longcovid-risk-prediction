@@ -38,11 +38,11 @@ STREAMLIT_HANDOFF.md
 POWERBI_BUILD_GUIDE.md
 POWERBI_DASHBOARD_SPEC.md
 
-# ── Offline analysis pipeline — not needed by the deployed app ───────────────
-advanced_methods.py
-test_analysis.py
-test_app.py
-requirements-analysis.txt
+# ── Scratch / build artefacts — not part of the deliverable ─────────────────
+patch_report.py
+_fig1_arch.png
+Report_IEEE_v21.pdf
+Report_IEEE_v22.pdf
 
 # ── Raw dataset — too large and sourced from Kaggle, not for public repo ────
 covid.csv

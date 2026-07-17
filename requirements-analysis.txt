@@ -1,0 +1,15 @@
+# Full dependencies for the offline analysis pipeline (covid_analysis_full.py,
+# advanced_methods.py). NOT used by the deployed Streamlit app — see requirements.txt
+# for the lean app runtime set.
+pandas>=1.5
+numpy>=1.23
+matplotlib>=3.6
+seaborn>=0.12
+scipy>=1.9
+scikit-learn>=1.1
+shap>=0.41
+xgboost>=1.7
+statsmodels>=0.13
+imbalanced-learn>=0.11
+joblib>=1.2
+streamlit>=1.28

@@ -1225,7 +1225,7 @@ def phase6_fairness_analysis(df_model: pd.DataFrame, predictions: dict,
                     fairness_results.append({
                         'demographic_group': f'Age {label}',
                         'group_size': mask.sum(),
-                        'model_accuracy': auc_score,
+                        'model_auc': auc_score,
                         'difference_from_baseline': difference,
                         'auc_status': 'OK' if abs(difference) < threshold else 'FLAG',
                         'brier': brier,
@@ -1244,7 +1244,7 @@ def phase6_fairness_analysis(df_model: pd.DataFrame, predictions: dict,
             logger.info("Creating age fairness visualization...")
             plt.figure(figsize=(10, 5))
             colors = ['#2ca02c' if row['auc_status'] == 'OK' else '#ff7f0e' for _, row in fair_df.iterrows()]
-            plt.bar(fair_df['demographic_group'], fair_df['model_accuracy'],
+            plt.bar(fair_df['demographic_group'], fair_df['model_auc'],
                    color=colors, alpha=0.7, edgecolor='black', linewidth=2)
             plt.title('Model Accuracy by Age Group (Fairness Audit)', fontweight='bold')
             plt.ylabel('AUC Score')
@@ -1291,7 +1291,7 @@ def phase6_fairness_analysis(df_model: pd.DataFrame, predictions: dict,
                     fairness_results.append({
                         'demographic_group': f'Sex: {label}',
                         'group_size': int(mask.sum()),
-                        'model_accuracy': auc,
+                        'model_auc': auc,
                         'difference_from_baseline': diff,
                         'auc_status': 'OK' if abs(diff) < threshold else 'FLAG',
                         'brier': brier,
@@ -1330,7 +1330,7 @@ def phase6_fairness_analysis(df_model: pd.DataFrame, predictions: dict,
                     fairness_results.append({
                         'demographic_group': grp_label,
                         'group_size': int(mask.sum()),
-                        'model_accuracy': auc,
+                        'model_auc': auc,
                         'difference_from_baseline': diff,
                         'auc_status': 'OK' if abs(diff) < threshold else 'FLAG',
                         'brier': brier,

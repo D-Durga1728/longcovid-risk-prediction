@@ -1077,10 +1077,11 @@ def load_models():
 @st.cache_data(show_spinner=False)
 def load_shap_values():
     """
-    Load Tree-SHAP feature importance for the deployed 9-feature model from
-    analysis_output/advanced/covid_tree_shap_importance.csv. Returns a list of
-    (pretty_label, importance_percent) tuples sorted descending.
-    Falls back to the recorded values if the CSV is missing.
+    Load SHAP feature importance for the DEPLOYED Logistic Regression from
+    analysis_output/analysis/covid_shap_values.csv - the same model that produces
+    each patient's risk (LinearExplainer), so the explanation matches the prediction.
+    Returns a list of (pretty_label, importance_percent) tuples sorted descending.
+    Falls back to the recorded deployed-model values if the CSV is missing.
     """
     _pretty = {
         "pneumonia": "Pneumonia", "age": "Age", "sex": "Sex",
@@ -1089,25 +1090,23 @@ def load_shap_values():
         "cardiovascular": "Cardiovascular",
     }
     _fallback = [
-        ("Pneumonia", 44.2), ("Age", 32.9), ("Sex", 8.5), ("Diabetes", 5.6),
-        ("Hypertension", 4.5), ("Obesity", 3.0), ("COPD", 0.6),
-        ("Asthma", 0.3), ("Cardiovascular", 0.3),
+        ("Pneumonia", 39.9), ("Age", 33.1), ("Sex", 10.9), ("Diabetes", 6.9),
+        ("Hypertension", 4.3), ("Obesity", 3.7), ("COPD", 0.6),
+        ("Asthma", 0.3), ("Cardiovascular", 0.2),
     ]
     _candidates = [
         os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                     "analysis_output", "advanced", "covid_tree_shap_importance.csv"),
-        os.path.join("analysis_output", "advanced", "covid_tree_shap_importance.csv"),
+                     "analysis_output", "analysis", "covid_shap_values.csv"),
+        os.path.join("analysis_output", "analysis", "covid_shap_values.csv"),
     ]
     for _p in _candidates:
         if os.path.isfile(_p):
             try:
-                _df = pd.read_csv(_p)
-                _tot = _df["tree_shap_importance"].sum()
-                _df = _df.sort_values("tree_shap_importance", ascending=False)
+                _df = pd.read_csv(_p).sort_values("importance_percent", ascending=False)
                 return [
                     (_pretty.get(str(r["feature_name"]).lower(),
                                  str(r["feature_name"]).title()),
-                     round(float(r["tree_shap_importance"]) / _tot * 100, 1))
+                     round(float(r["importance_percent"]), 1))
                     for _, r in _df.iterrows()
                 ]
             except Exception:
@@ -1368,7 +1367,7 @@ def render_nav():
         f'<a class="dcu-logo" href="?" target="_self" title="Home">{_logo_img}</a>'
         '<a class="proj-title" href="?page=tool" target="_self" title="Open the assessment tool">'
         '<div class="pt1">Long COVID Risk System</div>'
-        '<div class="pt2">COVID-19 mortality-proxy model</div>'
+        '<div class="pt2">COVID-19 mortality model</div>'
         '</a>'
         f'{_action}'
         '</div>'
@@ -1536,7 +1535,7 @@ def render_footer():
             <div>
                 {_flogo_html}
                 <div class="fb">Long COVID Risk Assessment</div>
-                <div class="ft2">COVID-19 mortality-proxy model with calibrated ML and SHAP
+                <div class="ft2">COVID-19 mortality model with calibrated ML and SHAP
                 explainability. DCU MSc research prototype - educational use only.</div>
             </div>
             <div>
@@ -1615,7 +1614,7 @@ def page_landing():
             <div class="hero-badge">DCU MSc Research Prototype · 2026</div>
             <h1 style="margin-bottom:6px;"><span>Long COVID</span><br>Risk Assessment
                 <span style="display:block;font-size:.42em;font-weight:700;color:#FFA700;
-                    margin-top:6px;letter-spacing:.01em;">COVID-19 mortality-proxy model</span>
+                    margin-top:6px;letter-spacing:.01em;">COVID-19 mortality model</span>
             </h1>
             <p style="margin-top:0;">Predictive modelling for personalised Long COVID risk
                stratification, built on 566,602 patient records with a calibrated
@@ -1883,7 +1882,7 @@ def page_landing():
     # ── Model Card (collapsible) - the single most defensible artefact ────────
     with st.expander("Model Card - full technical summary"):
         st.markdown(f"""
-**Model name:** Long COVID Risk Assessment - COVID-19 mortality-proxy model
+**Model name:** Long COVID Risk Assessment - COVID-19 mortality model
 **Owner:** Durga Prasad Narsing · MSc Data Analytics, Dublin City University (2026)
 
 | Field | Detail |
@@ -1941,11 +1940,11 @@ def page_landing():
         '<div id="section-shap" style="background:#fff;border-radius:18px;padding:24px 28px;'
         'box-shadow:0 4px 20px rgba(26,60,102,.09);border:1px solid #BFDBFE;margin-bottom:26px;">'
         '<div style="display:flex;gap:34px;flex-wrap:wrap;align-items:flex-start;">'
-        # ── LEFT: Tree-SHAP bars ──
+        # ── LEFT: SHAP bars ──
         '<div style="flex:1;min-width:300px;">'
-        '<div style="font-size:.71rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#2E5C92;margin-bottom:5px;">Tree SHAP (XGBoost) - Feature Importance</div>'
+        '<div style="font-size:.71rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#2E5C92;margin-bottom:5px;">SHAP (Logistic Regression) - Feature Importance</div>'
         '<div style="font-size:1.35rem;font-weight:800;color:#0D1B3E;margin-bottom:4px;">What Drives <span style="color:#2E5C92;">Predictions?</span></div>'
-        '<div style="font-size:.83rem;color:#374151;margin-bottom:14px;line-height:1.6;">Tree SHAP values (from the XGBoost benchmark model) show which clinical features most impact mortality risk. <em style="color:#6B7280;font-size:.76rem;">(Global mean |SHAP|, normalised to 100%)</em></div>'
+        '<div style="font-size:.83rem;color:#374151;margin-bottom:14px;line-height:1.6;">SHAP values computed on the deployed Logistic Regression - the same model that produces each patient\'s risk - show which clinical features most impact mortality risk. <em style="color:#6B7280;font-size:.76rem;">(Global mean |SHAP|, normalised to 100%)</em></div>'
         f'{fi_bars_html}'
         '</div>'
         # ── RIGHT: Clinical interpretation ──
@@ -2149,7 +2148,7 @@ def page_landing():
             '<li><strong>Lundberg, S.M. et al. (2020).</strong> Local explanations to global '
             'understanding with trees. <em>Nature Machine Intelligence</em>, 2:56–67. '
             '<a href="https://doi.org/10.1038/s42256-019-0138-9" target="_blank" rel="noopener">doi.org/10.1038/s42256-019-0138-9</a> '
-            '- Tree SHAP (XGBoost) importance.</li>'
+            '- SHAP (Logistic Regression) importance.</li>'
             '<li><strong>Hardt, M. et al. (2016).</strong> Equality of opportunity in supervised '
             'learning. <em>NeurIPS</em>. '
             '<a href="https://arxiv.org/abs/1610.02413" target="_blank" rel="noopener">arxiv.org/abs/1610.02413</a> '
@@ -2226,7 +2225,7 @@ def page_tool():
         '</div></div>'
         # description
         '<div style="font-size:.84rem;color:#374151;line-height:1.6;margin-top:8px;">'
-        'Enter a patient profile below to get a calibrated COVID-19 mortality-proxy risk score '
+        'Enter a patient profile below to get a calibrated COVID-19 mortality risk score '
         '(0–100%) with a risk band and the factors driving it. Use a '
         '<strong style="color:#1A3C66;">Sample Patient</strong> to autofill the form, or complete it '
         'manually, then click <strong style="color:#1A3C66;">Assess Risk</strong>. '
@@ -2558,7 +2557,7 @@ def page_tool():
             'border-radius:10px;padding:11px 16px;margin:4px 0 14px;display:flex;gap:14px;'
             'flex-wrap:wrap;font-size:.78rem;line-height:1.55;color:#374151;background:#FFFFFF;">'
             '<div style="flex:1;min-width:240px;color:#374151;"><strong style="color:#0D1B3E;">What this is:</strong> '
-            'a calibrated, population-level estimate of <em>severe-outcome (mortality-proxy)</em> risk '
+            'a calibrated, population-level estimate of <em>severe-outcome (mortality)</em> risk '
             'for screening and triage support.</div>'
             '<div style="flex:1;min-width:240px;color:#374151;"><strong style="color:#0D1B3E;">What this isn\'t:</strong> '
             'a Long COVID diagnosis, an individual certainty, or a substitute for clinical judgement - '

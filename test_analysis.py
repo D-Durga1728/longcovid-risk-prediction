@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """
-Unit & integration test suite for the Long COVID risk-assessment project.
+Unit & integration test suite for the COVID-19 in-hospital mortality
+risk-prediction project.
 
 Run:  python -m pytest test_analysis.py -v
 

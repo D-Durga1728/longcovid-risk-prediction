@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 """
 ===============================================================================
-COMPLETE COVID-19 LONG COVID RISK ASSESSMENT ANALYSIS - MAIN SCRIPT
+COVID-19 IN-HOSPITAL MORTALITY RISK PREDICTION - MAIN ANALYSIS SCRIPT
 ===============================================================================
 All Phases 1-12 with 35+ Visualizations
 Student: Durga Prasad Narsing (A00050350)
 Program: MSc Computing (Data Analytics), Dublin City University
 Supervisors: Dr Martin Crane; Dr Tai Tan Mai (Assistant Professor, School of Computing, DCU)
-Project: Predictive Modelling for Personalized Long COVID Risk Assessment
+Project: Predictive Modelling of COVID-19 In-Hospital Mortality Using Admission
+         Variables - A Responsible-ML Pipeline Toward Long COVID Risk Assessment
 
 DESCRIPTION:
 This is the MAIN script containing:

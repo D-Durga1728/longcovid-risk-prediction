@@ -1,5 +1,5 @@
 """
-Long COVID Risk Assessment System
+COVID-19 In-Hospital Mortality Risk Assessment System
 MSc Data Analytics Research Prototype - Dublin City University
 Author: Durga Prasad Narsing (A00050350) | Supervisor: Dr Tai Tan Mai | Initial Supervisor: Dr Martin Crane
 """
@@ -13,7 +13,7 @@ from datetime import datetime
 warnings.filterwarnings("ignore")
 
 st.set_page_config(
-    page_title="Long COVID Risk Assessment - DCU",
+    page_title="COVID-19 Mortality Risk Assessment - DCU",
     page_icon=None,
     layout="wide",
     initial_sidebar_state="collapsed",
@@ -930,9 +930,9 @@ def bclr(p): return "#DC2626" if p>=70 else "#EA580C" if p>=50 else "#D97706" if
 
 def lc_risks(pt, base):
     """
-    Estimate risk for the five Long COVID sequelae categories.
+    Illustrative heuristic scores for five post-COVID sequelae categories (NOT model outputs).
 
-    These are clinically-informed heuristics drawn from the Long COVID risk-factor
+    These are clinically-informed heuristics (not model outputs) drawn from the published risk-factor
     literature, NOT direct outputs of the trained mortality model. Each formula
     blends the base mortality risk with condition-specific factors (e.g. pneumonia
     weights respiratory, cardiovascular weights cardiac). The UI states this clearly
@@ -1366,7 +1366,7 @@ def render_nav():
         '<div class="nav-row1">'
         f'<a class="dcu-logo" href="?" target="_self" title="Home">{_logo_img}</a>'
         '<a class="proj-title" href="?page=tool" target="_self" title="Open the assessment tool">'
-        '<div class="pt1">Long COVID Risk System</div>'
+        '<div class="pt1">COVID-19 Mortality Risk System</div>'
         '<div class="pt2">COVID-19 mortality model</div>'
         '</a>'
         f'{_action}'
@@ -1435,7 +1435,7 @@ def render_contact():
         '<div style="font-size:.78rem;color:#BFDBFE;margin-bottom:10px;">School of Computing, Dublin City University</div>'
         '<div style="font-size:.75rem;color:rgba(255,255,255,.7);margin-bottom:12px;line-height:1.55;">'
         'MSc candidate specialising in machine learning and healthcare data analytics. '
-        'Designed and built this Long COVID risk assessment tool as part of the practicum research project.'
+        'Designed and built this COVID-19 in-hospital mortality risk assessment tool as part of the practicum research project.'
         '</div>'
         '<div style="display:flex;flex-direction:column;gap:7px;">'
         '<a href="mailto:durgaprasad.narsing2@mail.dcu.ie" '
@@ -1534,7 +1534,7 @@ def render_footer():
         <div class="fg2">
             <div>
                 {_flogo_html}
-                <div class="fb">Long COVID Risk Assessment</div>
+                <div class="fb">COVID-19 Mortality Risk Assessment</div>
                 <div class="ft2">COVID-19 mortality model with calibrated ML and SHAP
                 explainability. DCU MSc research prototype - educational use only.</div>
             </div>
@@ -1612,11 +1612,11 @@ def page_landing():
     <div id="section-overview" class="hero">
         <div>
             <div class="hero-badge">DCU MSc Research Prototype · 2026</div>
-            <h1 style="margin-bottom:6px;"><span>Long COVID</span><br>Risk Assessment
+            <h1 style="margin-bottom:6px;"><span>COVID-19 Mortality</span><br>Risk Assessment
                 <span style="display:block;font-size:.42em;font-weight:700;color:#FFA700;
                     margin-top:6px;letter-spacing:.01em;">COVID-19 mortality model</span>
             </h1>
-            <p style="margin-top:0;">Predictive modelling for personalised Long COVID risk
+            <p style="margin-top:0;">Predictive modelling of COVID-19 in-hospital mortality risk
                stratification, built on 566,602 patient records with a calibrated
                logistic-regression model, SHAP-based explanation, and the supporting
                clinical evidence.</p>
@@ -1639,7 +1639,7 @@ def page_landing():
             </div>
             <div class="hero-stat">
                 <div class="n countup">5</div>
-                <div class="l">Long COVID Sequelae Assessed</div>
+                <div class="l">Sequelae Categories (Heuristic)</div>
             </div>
         </div>
     </div>
@@ -1882,13 +1882,13 @@ def page_landing():
     # ── Model Card (collapsible) - the single most defensible artefact ────────
     with st.expander("Model Card - full technical summary"):
         st.markdown(f"""
-**Model name:** Long COVID Risk Assessment - COVID-19 mortality model
+**Model name:** COVID-19 In-Hospital Mortality Risk Model
 **Owner:** Durga Prasad Narsing · MSc Data Analytics, Dublin City University (2026)
 
 | Field | Detail |
 |---|---|
 | **Intended use** | Research/education prototype for risk *stratification* - **not** a medical device, **not** for clinical decisions. |
-| **Target** | In-hospital mortality (used as a *proxy* for severe outcome / Long COVID risk). |
+| **Target** | In-hospital mortality - a directly labelled severe outcome. Long COVID is a distinct post-acute condition and is **not** predicted by this model. |
 | **Data** | 566,602 real records → {mdl_metrics['n_total']:,} confirmed COVID-19 cases (Mexican open COVID dataset). |
 | **Split** | Stratified 80/20 - {mdl_metrics['n_train']:,} train / {mdl_metrics['n_test']:,} test. |
 | **Algorithm** | Tuned **Logistic Regression**, isotonic-**calibrated** (selected over RF, GB, XGBoost & Stacking; no model significantly beats LR by DeLong). |
@@ -1901,10 +1901,10 @@ def page_landing():
 | **Ethics** | DCU F-REC compliant; fully de-identified open data. |
 
 **Known limitations**
-- Mortality is a **proxy**, not a direct Long COVID diagnosis - interpret accordingly.
+- This model predicts **in-hospital mortality only**. Mortality and Long COVID are distinct outcomes; a patient who dies cannot subsequently develop Long COVID.
 - Single-country dataset; external/geographic generalisation is unverified.
 - **Low precision at the chosen threshold** (≈{mdl_metrics['ens']['precision']:.0f}%) - suitable for *screening/triage*, not confirmation.
-- Long COVID sequelae scores are clinically-informed **heuristics**, not direct model outputs.
+- Sequelae category scores are clinically-informed **heuristics for illustration only** - they are NOT model outputs and are not validated.
 """)
 
     st.markdown("<hr class='div' style='margin:28px 0 20px;'>", unsafe_allow_html=True)
@@ -1985,7 +1985,7 @@ def page_landing():
     <div id="section-methodology" class="sh">
         <h2>Built for <span>Clinical Intelligence</span></h2>
         <p>A research-grade tool combining interpretable ML with evidence-based
-           clinical guidelines for Long COVID risk stratification.</p>
+           clinical guidelines for COVID-19 severe-outcome risk stratification.</p>
     </div>
     <div class="mtl">
         <div class="mtl-step"><div class="mtl-num">1</div><div class="mtl-ic">🗄️</div>
@@ -2020,7 +2020,7 @@ def page_landing():
             Clinicians see why a risk score was generated, not just the number.</div>
         </div>
         <div class="fc"><div class="fc-icon">🫁❤️🧠🔋⚗️</div>
-            <div class="fc-title">5 Long COVID Sequelae</div>
+            <div class="fc-title">5 Sequelae (Heuristic)</div>
             <div class="fc-text">Respiratory, Cardiac, Neurological (brain fog),
             Systemic (fatigue) and Metabolic - each assessed independently.</div>
         </div>
@@ -2073,7 +2073,7 @@ def page_landing():
             </div>
             <div class="wu-card"><div class="wu-icon">🔬</div>
                 <div class="wu-title">Clinical Research Scientist</div>
-                <div class="wu-text">Researchers investigating Long COVID epidemiology,
+                <div class="wu-text">Researchers investigating COVID-19 severe-outcome epidemiology,
                 risk factors, and intervention outcomes.</div>
             </div>
             <div class="wu-card"><div class="wu-icon">🎓</div>
@@ -2214,7 +2214,7 @@ def page_tool():
         '<div style="font-size:.72rem;font-weight:800;color:#2E5C92;text-transform:uppercase;'
         'letter-spacing:.07em;margin-bottom:4px;">Overview</div>'
         '<div style="font-size:1.15rem;font-weight:800;color:#0D1B3E;margin-bottom:6px;">'
-        'Long COVID Risk Assessment Tool</div></div>'
+        'COVID-19 Mortality Risk Assessment Tool</div></div>'
         '<div style="display:flex;gap:10px;flex-shrink:0;flex-wrap:wrap;">'
         '<div style="background:#EFF6FF;border-radius:8px;padding:6px 14px;'
         'font-size:.74rem;font-weight:700;color:#1E40AF;border:1px solid #BFDBFE;">'
@@ -2483,11 +2483,11 @@ def page_tool():
             'margin-top:20px;box-shadow:0 2px 12px rgba(26,60,102,.08);'
             'border:1px solid #BFDBFE;text-align:center;">'
             '<div style="font-size:1rem;font-weight:700;color:#0D1B3E;margin-bottom:8px;">'
-            'Ready for Long COVID Assessment</div>'
+            'Ready for Mortality Risk Assessment</div>'
             '<div style="font-size:.85rem;color:#4B6CB7;max-width:520px;margin:0 auto;">'
             'Fill in the patient profile above, then click '
             '<strong>Assess Risk</strong> to generate a personalised '
-            'Long COVID risk prediction.<br><br>'
+            'COVID-19 in-hospital mortality risk prediction.<br><br>'
             'Or click a <strong>Sample Patient</strong> button for an instant demo.'
             '</div></div>',
             unsafe_allow_html=True)
@@ -2538,7 +2538,7 @@ def page_tool():
     var styles = '';
     pdoc.querySelectorAll('style, link[rel="stylesheet"]').forEach(function(el){ styles += el.outerHTML; });
     var w = window.open('', '_blank');
-    w.document.write('<html><head><title>Long COVID Risk Assessment - Result</title>'
+    w.document.write('<html><head><title>COVID-19 Mortality Risk Assessment - Result</title>'
       + styles
       + '<style>body{background:#fff;padding:24px;margin:0;}'
       + '.dcu-navbar,.stButton,button,iframe,[data-testid="stToolbar"],[data-testid="stHeader"]{display:none!important;}'
@@ -2560,7 +2560,7 @@ def page_tool():
             'a calibrated, population-level estimate of <em>severe-outcome (mortality)</em> risk '
             'for screening and triage support.</div>'
             '<div style="flex:1;min-width:240px;color:#374151;"><strong style="color:#0D1B3E;">What this isn\'t:</strong> '
-            'a Long COVID diagnosis, an individual certainty, or a substitute for clinical judgement - '
+            'a clinical diagnosis, an individual certainty, or a substitute for clinical judgement - '
             'a 30% score means ~30 of 100 similar patients experienced the outcome.</div>'
             '</div>',
             unsafe_allow_html=True)
@@ -2812,7 +2812,7 @@ def page_tool():
         cl, cf = st.columns([3, 2], gap="large")
         with cl:
             st.markdown(
-                '<div class="card-title">Long COVID Sequelae Risk Assessment '
+                '<div class="card-title">Sequelae Categories - Heuristic, Not Model Output '
                 '<span style="font-size:.68rem;color:#6B7280;font-weight:500;'
                 'text-transform:none;letter-spacing:0;">'
                 '(Heuristic estimates - not direct model outputs)</span></div>',

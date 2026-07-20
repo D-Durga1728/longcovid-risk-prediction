@@ -1,0 +1,58 @@
+# =============================================================================
+# GitLab CI - Predictive Modelling of COVID-19 In-Hospital Mortality
+# Durga Prasad Narsing (A00050350) - MSc Computing (Data Analytics), DCU
+#
+# Runs the 44-test statistical/integration suite on every push and merge
+# request. The pipeline does NOT retrain models and does NOT require the
+# dataset (covid.csv is intentionally not committed), so it stays fast.
+# =============================================================================
+
+stages:
+  - lint
+  - test
+
+default:
+  image: python:3.11-slim
+  cache:
+    key: "$CI_COMMIT_REF_SLUG"
+    paths:
+      - .cache/pip
+
+variables:
+  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+  PIP_DISABLE_PIP_VERSION_CHECK: "1"
+  PYTHONDONTWRITEBYTECODE: "1"
+
+# -----------------------------------------------------------------------------
+# Stage 1: syntax / import sanity check (fast fail)
+# -----------------------------------------------------------------------------
+syntax-check:
+  stage: lint
+  script:
+    - python -m pip install --upgrade pip
+    - python -m py_compile covid_analysis_full.py advanced_methods.py streamlit_covid_predictor.py
+    - echo "All modules compile."
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "push"'
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+
+# -----------------------------------------------------------------------------
+# Stage 2: unit + integration tests (44 tests)
+# -----------------------------------------------------------------------------
+unit-tests:
+  stage: test
+  before_script:
+    - python -m pip install --upgrade pip
+    - pip install -r requirements-analysis.txt
+    - pip install pytest pytest-cov
+  script:
+    - pytest test_analysis.py -v --junitxml=report.xml --cov=. --cov-report=term
+  coverage: '/^TOTAL.+?(\d+\%)$/'
+  artifacts:
+    when: always
+    reports:
+      junit: report.xml
+    expire_in: 1 week
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "push"'
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'

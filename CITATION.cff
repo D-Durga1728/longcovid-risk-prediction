@@ -1,0 +1,31 @@
+cff-version: 1.2.0
+message: "If you use this software or its findings, please cite as below."
+title: "Predictive Modelling of COVID-19 In-Hospital Mortality Using Admission Variables: A Responsible-ML Pipeline Toward Long COVID Risk Assessment"
+abstract: >-
+  An end-to-end, leakage-free responsible machine-learning pipeline that predicts
+  COVID-19 in-hospital mortality from nine admission-time clinical features on
+  220,218 confirmed cases. Five model families are benchmarked and the deployed
+  model is selected by DeLong's test; probabilities are isotonic-calibrated, a
+  subgroup fairness audit with threshold mitigation is performed, and multi-layer
+  explanations (SHAP on the deployed model, odds ratios, nomogram) are surfaced
+  through a Streamlit research prototype.
+type: software
+authors:
+  - family-names: Narsing
+    given-names: Durga Prasad
+    affiliation: "School of Computing, Dublin City University"
+    email: durgaprasad.narsing2@mail.dcu.ie
+license: MIT
+version: "1.0.0"
+date-released: "2026-07-13"
+keywords:
+  - COVID-19
+  - in-hospital mortality
+  - clinical prediction model
+  - probability calibration
+  - algorithmic fairness
+  - explainable AI
+  - SHAP
+  - DeLong test
+  - responsible AI
+  - Streamlit
